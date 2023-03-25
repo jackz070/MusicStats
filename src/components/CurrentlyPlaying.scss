@@ -1,0 +1,22 @@
+.currently_playing-container {
+  max-width: 500px;
+
+  .currently_playing-header {
+  }
+
+  .currently_playing-info {
+    display: flex;
+
+    img {
+      width: 90px;
+      height: 90px;
+      margin-right: 1rem;
+    }
+
+    .currently_playing-info_name {
+      font-size: 1rem;
+      letter-spacing: 0;
+      font-weight: 700;
+    }
+  }
+}

@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
 
 const baseURL = import.meta.env.VITE_baseURL;
 const clientId = import.meta.env.VITE_clientId;
@@ -49,6 +48,11 @@ const useProvideSpotify = () => {
   const [tokenExpiry, setTokenExpiry] = useState(null);
   const [topArtists, setTopArtists] = useState(null);
   const [topTracks, setTopTracks] = useState(null);
+  const [timeRange, setTimeRange] = useState("medium_term");
+  const [isFetching, setIsFetching] = useState(false);
+  const [currentlyPlaying, setCurrentlyPlaying] = useState(null);
+  const [genreData, setGenreData] = useState(null);
+  const [recentlyPlayed, setRecentlyPlayed] = useState(null);
 
   const callApiEndpoint = async ({ path, method = "GET" }) => {
     if (hasTokenExpired()) {
@@ -70,14 +74,6 @@ const useProvideSpotify = () => {
     return await callApiEndpoint({ path: "/me", token });
   };
 
-  const fetchTopArtists = async () => {
-    return await callApiEndpoint({ path: "/me/top/artists", token });
-  };
-
-  const fetchTopTracks = async () => {
-    return await callApiEndpoint({ path: "/me/top/tracks", token });
-  };
-
   const login = () => {
     window.location.replace(
       `https://accounts.spotify.com/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes}&response_type=token&state=${generateState(
@@ -90,6 +86,9 @@ const useProvideSpotify = () => {
     const searchParams = new URLSearchParams(window.location.hash.substring(1));
 
     try {
+      if (window.location.href.includes("error")) {
+        throw new Error();
+      }
       const accessToken = searchParams.get("access_token");
       const expiresIn = parseInt(searchParams.get("expires_in"), 10);
       const tokenType = searchParams.get("token_type");
@@ -158,33 +157,158 @@ const useProvideSpotify = () => {
       setUser(user);
     } catch (err) {
       console.error(err);
-
-      // history.push("/");
     }
   };
 
-  const loadTopArtists = async () => {
-    try {
-      const data = await fetchTopArtists();
-
-      setTopArtists(data);
-    } catch (err) {
-      console.error(err);
-
-      // history.push("/");
+  const changeTimeRange = (value) => {
+    if (
+      value === "short_term" ||
+      value === "medium_term" ||
+      value === "long_term"
+    ) {
+      setTimeRange(value);
+    } else {
+      null;
     }
   };
 
-  const loadTopTracks = async () => {
-    try {
-      const data = await fetchTopTracks();
+  const fetchCurrentlyPlaying = async () => {
+    const callPath = `/me/player/currently-playing`;
+    return await callApiEndpoint({
+      path: `${callPath}`,
+      token,
+    });
+  };
 
-      setTopTracks(data);
+  const loadCurrentlyPlaying = async () => {
+    try {
+      const currentlyPlayingData = await fetchCurrentlyPlaying();
+      setCurrentlyPlaying(currentlyPlayingData);
+    } catch (err) {
+      setCurrentlyPlaying(null);
+    }
+  };
+
+  const loadRecentlyPlayed = async () => {
+    try {
+      const recentlyPlayedData = await fetchRecentlyPlayed();
+      setRecentlyPlayed(recentlyPlayedData);
     } catch (err) {
       console.error(err);
-
-      // history.push("/");
     }
+  };
+
+  const fetchRecentlyPlayed = async () => {
+    const callPath = `/me/player/recently-played`;
+    return await callApiEndpoint({
+      path: `${callPath}`,
+      token,
+    });
+  };
+
+  const fetchTopTracks = async (pathProp?) => {
+    const callPath = pathProp
+      ? `/me/top/tracks?${pathProp?.split("?")[1] || ""}`
+      : `/me/top/tracks?limit=20&offset=0`;
+    return await callApiEndpoint({
+      path: `${callPath}&time_range=${timeRange}`,
+      token,
+    });
+  };
+
+  const fetchTopArtists = async (pathProp?) => {
+    const callPath = pathProp
+      ? `/me/top/artists?${pathProp?.split("?")[1] || ""}`
+      : `/me/top/artists?limit=20&offset=0`;
+    return await callApiEndpoint({
+      path: `${callPath}&time_range=${timeRange}`,
+      token,
+    });
+  };
+
+  const loadAllData = async () => {
+    setIsFetching(true);
+    try {
+      loadCurrentlyPlaying();
+
+      const artistsData = await fetchTopArtists();
+      setTopArtists(artistsData);
+
+      const tracksData = await fetchTopTracks();
+
+      setTopTracks(tracksData);
+      loadRecentlyPlayed();
+      getGenreData();
+      setIsFetching(false);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchNextTracks = async () => {
+    try {
+      const tracksData = await fetchTopTracks(topTracks?.next);
+      setTopTracks(tracksData);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchPrevTracks = async () => {
+    try {
+      const tracksData = await fetchTopTracks(topTracks?.previous);
+      setTopTracks(tracksData);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchNextArtists = async () => {
+    setIsFetching(true);
+    try {
+      const artistsData = await fetchTopArtists(topArtists?.next);
+      setIsFetching(false);
+      setTopArtists(artistsData);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchPrevArtists = async () => {
+    setIsFetching(true);
+    try {
+      const artistsData = await fetchTopArtists(topArtists?.previous);
+      setIsFetching(false);
+      setTopArtists(artistsData);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const getGenreData = async () => {
+    const allTopArtists = await callApiEndpoint({
+      path: `/me/top/artists?limit=50&offset=0&time_range=${timeRange}`,
+      token,
+    });
+
+    const genres = [];
+    const fillGenres = () =>
+      allTopArtists?.items?.forEach((artist) =>
+        artist?.genres?.forEach((genre) => genres.push(genre))
+      );
+    fillGenres();
+    const tally = [];
+    const tallyGenres = () => {
+      genres.forEach((genre) => {
+        const found = tally.findIndex((item) => item.text === genre);
+        found === -1
+          ? tally.push({ text: genre, value: 1 })
+          : (tally[found].value = tally[found].value + 1);
+      });
+      setGenreData(tally.sort((a, b) => b.value - a.value).slice(0, 25));
+    };
+    tallyGenres();
+    console.log(genreData);
   };
 
   useEffect(() => {
@@ -214,11 +338,16 @@ const useProvideSpotify = () => {
         loadCurrentUser();
       } else {
         setIsLoading(false);
-        loadTopArtists();
-        loadTopTracks();
+        loadAllData();
       }
     }
   }, [token, tokenExpiry, user]);
+
+  useEffect(() => {
+    if (token && tokenExpiry && user) {
+      loadAllData();
+    }
+  }, [timeRange]);
 
   return {
     user,
@@ -232,5 +361,15 @@ const useProvideSpotify = () => {
     fetchUserInfo,
     topArtists,
     topTracks,
+    currentlyPlaying,
+    changeTimeRange,
+    fetchPrevTracks,
+    fetchNextTracks,
+    fetchNextArtists,
+    fetchPrevArtists,
+    timeRange,
+    isFetching,
+    genreData,
+    recentlyPlayed,
   };
 };

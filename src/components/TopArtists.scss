@@ -1,0 +1,118 @@
+#top_artists {
+  h2 {
+    font-size: 4rem;
+    margin-bottom: 40px;
+  }
+
+  button {
+    margin: 20px 0;
+    font-size: 1.25rem;
+    background: none;
+    border: none;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .top-artists_table-card-fetching {
+    margin: auto auto;
+  }
+
+  .top-artists_container {
+    color: white;
+
+    a {
+      color: white;
+      text-decoration: none;
+    }
+
+    .top-artists_table {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 2rem;
+
+      @media screen and (max-width: 600px) {
+        width: 100%;
+        justify-items: center;
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .top-artists_table-card {
+      background: linear-gradient(
+        30deg,
+        #c921cf 0%,
+        #b141bd 16%,
+        #9852ab 33%,
+        #7e5c9a 50%,
+        #636489 66%,
+        #426878 83%,
+        #006b67 100%
+      );
+      -webkit-box-shadow: 10px 10px 0px -5px rgba(255, 255, 255, 1);
+      -moz-box-shadow: 10px 10px 0px -5px rgba(255, 255, 255, 1);
+      box-shadow: 10px 10px 0px -5px rgba(255, 255, 255, 1);
+      border-radius: 2px;
+      width: 190px;
+      height: 270px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: all 0.8s;
+
+      &:hover {
+        background: linear-gradient(
+          50deg,
+          #c921cf 0%,
+          #b141bd 16%,
+          #9852ab 33%,
+          #7e5c9a 50%,
+          #636489 66%,
+          #426878 83%,
+          #006b67 100%
+        );
+        filter: brightness(1.1);
+        transform: scale(1.02);
+        -webkit-box-shadow: 10px 9px 0px -7px rgba(255, 255, 255, 1);
+        -moz-box-shadow: 10px 9px 0px -7px rgba(255, 255, 255, 1);
+        box-shadow: 10px 9px 0px -7px rgba(255, 255, 255, 1);
+      }
+
+      .top-artists_table-card-top {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .top-artists_table-card-link-wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+      }
+    }
+
+    .top-artists_table-card_name {
+      font-weight: bold;
+      font-size: 1.3rem;
+      padding: 10px;
+      margin-top: 6px;
+      height: 50px;
+    }
+
+    .top-artists_table-card_spotify-icon {
+      height: 21px;
+      margin: 0 10px 5px 10px;
+    }
+
+    .top-artists_table-card_image {
+      height: 170px;
+      object-fit: contain;
+    }
+  }
+}

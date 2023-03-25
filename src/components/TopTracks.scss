@@ -1,0 +1,103 @@
+#top_tracks {
+  h2 {
+    font-size: 3rem;
+  }
+
+  button {
+    margin: 20px 0;
+    font-size: 1.25rem;
+    background: none;
+    border: none;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .top-tracks_container {
+    color: white;
+    .top-tracks_table {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .top-tracks_table-item {
+        display: flex;
+        align-items: center;
+        height: 60px;
+        transition: all 0.8s;
+        cursor: pointer;
+        background: linear-gradient(
+          30deg,
+          #c921cf 0%,
+          #b141bd 16%,
+          #9852ab 33%,
+          #7e5c9a 50%,
+          #636489 66%,
+          #426878 83%,
+          #006b67 100%
+        );
+
+        -webkit-box-shadow: 8px 9px 0px -5px rgba(255, 255, 255, 1);
+        -moz-box-shadow: 8px 9px 0px -5px rgba(255, 255, 255, 1);
+        box-shadow: 8px 9px 0px -5px rgba(255, 255, 255, 1);
+
+        &:hover {
+          background: linear-gradient(
+            120deg,
+            #c921cf 0%,
+            #b141bd 16%,
+            #9852ab 33%,
+            #7e5c9a 50%,
+            #636489 66%,
+            #426878 83%,
+            #006b67 100%
+          );
+          filter: brightness(1.1);
+          transform: scale(1.02);
+          -webkit-box-shadow: 8px 8px 0px -6px rgba(255, 255, 255, 1);
+          -moz-box-shadow: 8px 8px 0px -6px rgba(255, 255, 255, 1);
+          box-shadow: 8px 8px 0px -6px rgba(255, 255, 255, 1);
+        }
+        .top-tracks_table-item_fetching {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+        }
+        .top-tracks_table-item_data {
+          display: flex;
+          width: 100%;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .top-tracks_table-item_img {
+          width: 60px;
+          height: 60px;
+        }
+        .top-tracks_table-name {
+          font-weight: 700;
+          margin: 0 10px;
+        }
+        .top-tracks_table-artist {
+          font-weight: 300;
+          margin-left: 10px;
+        }
+        .top-tracks_table-item_spotify-icon-container {
+          display: flex;
+          align-items: center;
+          height: 100%;
+        }
+
+        .top-tracks_table-item_spotify-icon {
+          height: 21px;
+          margin: 5px 10px 5px 10px;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+.floating-bar-time_range-buttons {
+  position: fixed;
+  width: 16rem;
+
+  bottom: 0.5rem;
+  left: 2%;
+  background-color: #006b67;
+
+  padding: 0.5rem 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.8s;
+  -webkit-box-shadow: 10px 10px 0px -5px rgba(0, 0, 0, 1);
+  -moz-box-shadow: 10px 10px 0px -5px rgba(0, 0, 0, 1);
+  box-shadow: 10px 10px 0px -5px rgba(0, 0, 0, 1);
+
+  .floating-bar-time_range-button {
+    font-size: 1.2rem;
+    color: white;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.8s;
+    margin: 0.1rem 0.5rem;
+
+    &:hover:not(.active) {
+      background-color: #636489;
+      transform: scale(1.4);
+    }
+  }
+
+  .active {
+    background: #9852ab;
+    transform: scale(1.4);
+  }
+}
