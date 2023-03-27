@@ -1,5 +1,5 @@
 * {
-  font-family: Urbanist;
+  font-family: Open Sans;
   letter-spacing: 1px;
 }
 
@@ -15,6 +15,10 @@ body {
   justify-content: center;
   padding-bottom: 3rem;
   max-width: 700px;
+
+  @media screen and (max-width: 700px) {
+    max-width: 300px;
+  }
 }
 
 /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */

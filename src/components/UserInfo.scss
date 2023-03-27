@@ -1,0 +1,14 @@
+.user-info {
+  display: flex;
+  align-items: flex-end;
+  gap: 2rem;
+
+  h2 {
+    margin: 0;
+    font-size: 2rem;
+  }
+}
+
+.user-info_header {
+  font-weight: bold;
+}

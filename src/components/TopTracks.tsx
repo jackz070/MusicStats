@@ -6,16 +6,21 @@ import Spotify_icon from "../../public/Spotify_icon.png";
 const TopTracks = () => {
   const { topTracks, isLoading, fetchPrevTracks, fetchNextTracks, isFetching } =
     useSpotify();
-
+  // TODO extract this table so that it can be also used by recently played
   return (
-    <section id="top_tracks">
-      <h2>Your Top Tracks</h2>
+    <section className="top_tracks">
+      <h2>Top Tracks</h2>
       {isLoading && <div>Loading...</div>}
       {topTracks && (
         <div className="top-tracks_container">
           <div className="top-tracks_table">
             {topTracks?.items?.map((item, index) => (
-              <div key={index} className="top-tracks_table-item">
+              <a
+                href={`http://open.spotify.com/track/${item.id}`}
+                target="_blank"
+                key={index}
+                className="top-tracks_table-item"
+              >
                 {isFetching ? (
                   <div className="top-tracks_table-item_fetching">
                     <InfinitySpin color="white" width="100" />
@@ -30,11 +35,19 @@ const TopTracks = () => {
                     <div className="top-tracks_table-item_data">
                       <div>
                         <div className="top-tracks_table-name">{item.name}</div>
-                        {item.artists.map((artist, index) => (
-                          <div key={index} className="top-tracks_table-artist">
-                            {artist.name}
-                          </div>
-                        ))}
+                        <div className="top-tracks_table-artist">
+                          {item.artists.map((artist, index) =>
+                            item?.artists.length > 1 ? (
+                              index === item?.artists?.length - 1 ? (
+                                <span>{artist?.name}</span>
+                              ) : (
+                                <span>{artist?.name + ", "}</span>
+                              )
+                            ) : (
+                              <span>{artist?.name}</span>
+                            )
+                          )}
+                        </div>
                       </div>
                       <div className="top-tracks_table-item_spotify-icon-container">
                         <img
@@ -45,7 +58,7 @@ const TopTracks = () => {
                     </div>
                   </>
                 )}
-              </div>
+              </a>
             ))}
           </div>
           <div>

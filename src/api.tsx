@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  ReactFragment,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 const baseURL = import.meta.env.VITE_baseURL;
 const clientId = import.meta.env.VITE_clientId;
@@ -44,7 +50,7 @@ export const useSpotify = () => {
 const useProvideSpotify = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState<string | null>(null);
   const [tokenExpiry, setTokenExpiry] = useState(null);
   const [topArtists, setTopArtists] = useState(null);
   const [topTracks, setTopTracks] = useState(null);
@@ -199,7 +205,7 @@ const useProvideSpotify = () => {
   };
 
   const fetchRecentlyPlayed = async () => {
-    const callPath = `/me/player/recently-played`;
+    const callPath = `/me/player/recently-played?limit=50`;
     return await callApiEndpoint({
       path: `${callPath}`,
       token,
@@ -246,18 +252,22 @@ const useProvideSpotify = () => {
   };
 
   const fetchNextTracks = async () => {
+    setIsFetching(true);
     try {
       const tracksData = await fetchTopTracks(topTracks?.next);
       setTopTracks(tracksData);
+      setIsFetching(false);
     } catch (err) {
       console.error(err);
     }
   };
 
   const fetchPrevTracks = async () => {
+    setIsFetching(true);
     try {
       const tracksData = await fetchTopTracks(topTracks?.previous);
       setTopTracks(tracksData);
+      setIsFetching(false);
     } catch (err) {
       console.error(err);
     }
@@ -308,7 +318,6 @@ const useProvideSpotify = () => {
       setGenreData(tally.sort((a, b) => b.value - a.value).slice(0, 25));
     };
     tallyGenres();
-    console.log(genreData);
   };
 
   useEffect(() => {

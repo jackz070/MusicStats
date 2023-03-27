@@ -13,7 +13,7 @@ const TopArtists = () => {
   } = useSpotify();
   return (
     <section id="top_artists">
-      <h2>Your Top Artists</h2>
+      <h2>Top Artists</h2>
       {isLoading && <div>Loading...</div>}
 
       {topArtists && (

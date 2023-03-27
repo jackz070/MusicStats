@@ -20,6 +20,7 @@ const Login = () => {
         <p>Where you can get all your listening stats</p>
       </div>
       <button onClick={login}>Login with Spotify</button>
+      <p className="login-notice">MusicStats is front-end only and stores no data. Everything happens only in your browser.</p>
     </section>
   );
 };

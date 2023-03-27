@@ -1,5 +1,63 @@
 .navbar {
   color: white;
   font-size: 1.25rem;
-  padding: 0 2rem;
+
+  position: sticky;
+  top: 0;
+  background-color: rgb(16, 16, 16);
+
+  z-index: 50;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  @media screen and (max-width: 768px) {
+    padding: 0.25rem 1rem;
+  }
+
+  .user-info_data {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .user-info_data-image {
+      width: 40px;
+      object-fit: contain;
+      margin: 6px;
+
+      border-radius: 50%;
+    }
+
+    .user-info_data-settings {
+      position: relative;
+
+      button {
+        font-size: 2rem;
+        border: none;
+        background: none;
+        cursor: pointer;
+      }
+
+      .user-info_data-settings_logout-button {
+        border: 1px solid black;
+        font-size: 0.75rem;
+        padding: 5px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        color: black;
+        background-color: white;
+
+        position: absolute;
+        top: 60px;
+        right: -10px;
+
+        &:hover {
+          filter: brightness(0.9);
+        }
+      }
+    }
+  }
 }

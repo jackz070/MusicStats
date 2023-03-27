@@ -1,6 +1,18 @@
 .genre-cloud_containter {
-  width: 600px;
-  height: 500px;
+  height: 550px;
+  margin-bottom: 4rem;
+
+  @media screen and (max-width: 700px) {
+    height: 450px;
+  }
+
+  @media screen and (max-width: 550px) {
+    height: 400px;
+  }
+
+  @media screen and (max-width: 400px) {
+    height: 350px;
+  }
 }
 
 .genre-cloud_loading {

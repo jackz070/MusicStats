@@ -1,7 +1,5 @@
-#top_tracks {
-  h2 {
-    font-size: 3rem;
-  }
+.top_tracks {
+
 
   button {
     margin: 20px 0;
@@ -11,6 +9,7 @@
     text-decoration: none;
     cursor: pointer;
     transition: all 0.2s;
+    color: white;
 
     &:hover {
       text-decoration: underline;
@@ -18,7 +17,7 @@
   }
 
   .top-tracks_container {
-    color: white;
+    max-width: 95vw;
     .top-tracks_table {
       display: flex;
       flex-direction: column;
@@ -30,6 +29,7 @@
         height: 60px;
         transition: all 0.8s;
         cursor: pointer;
+
         background: linear-gradient(
           30deg,
           #c921cf 0%,
@@ -71,6 +71,7 @@
         .top-tracks_table-item_data {
           display: flex;
           width: 100%;
+
           align-items: center;
           justify-content: space-between;
         }
@@ -79,10 +80,21 @@
           width: 60px;
           height: 60px;
         }
+
         .top-tracks_table-name {
           font-weight: 700;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          height: 1.2rem;
           margin: 0 10px;
+          max-width: 520px;
+
+          @media screen and (max-width: 700px) {
+            max-width: 60vw;
+          }
         }
+
         .top-tracks_table-artist {
           font-weight: 300;
           margin-left: 10px;
