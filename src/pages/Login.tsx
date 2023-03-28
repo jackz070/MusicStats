@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSpotify } from "../api";
 import bgVideo from "../../public/abstract-71292.mp4";
 
@@ -7,7 +7,9 @@ const Login = () => {
 
   useEffect(() => {
     const video = document.querySelector("video");
-    video.playbackRate = 0.4;
+    if (video) {
+      video.playbackRate = 0.4;
+    }
   }, []);
 
   return (
@@ -16,11 +18,17 @@ const Login = () => {
         <source src={bgVideo} type="video/mp4" />
       </video>
       <div>
-        <h2>Welcome to MusicStats</h2>
-        <p>Where you can get all your listening stats</p>
+        <p className="login-hero">
+          <i>All your</i>
+          <br /> <b className="login-hero_large">Spotify listening stats</b>
+          <br /> <i>in one place</i>
+        </p>
       </div>
       <button onClick={login}>Login with Spotify</button>
-      <p className="login-notice">MusicStats is front-end only and stores no data. Everything happens only in your browser.</p>
+      <p className="login-notice">
+        MusicStats is front-end only and stores no data. Everything happens only
+        in your browser.
+      </p>
     </section>
   );
 };

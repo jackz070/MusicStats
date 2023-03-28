@@ -1,19 +1,4 @@
 #top_artists {
-  button {
-    margin: 20px 0;
-    font-size: 1.25rem;
-    background: none;
-    border: none;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: white;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
   .top-artists_table-card-fetching {
     margin: auto auto;
   }

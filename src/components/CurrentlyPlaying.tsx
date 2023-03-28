@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useSpotify } from "../api";
 import LoadingSpinner from "./LoadingSpinner";
+import SpotifyApi from "spotify-api";
 
 const CurrentlyPlaying = () => {
   let { currentlyPlaying, recentlyPlayed, isFetching } = useSpotify();
-  const [trackData, setTrackData] = useState({});
+  const [trackData, setTrackData] = useState<
+    SpotifyApi.TrackObjectFull | SpotifyApi.EpisodeObjectFull | null
+  >();
 
   useEffect(() => {
     currentlyPlaying
       ? setTrackData(currentlyPlaying.item)
-      : setTrackData(recentlyPlayed?.items?.[0]?.track),
-      console.log(trackData);
+      : setTrackData(recentlyPlayed?.items?.[0]?.track);
   }, [currentlyPlaying, recentlyPlayed]);
 
   return (
@@ -31,12 +33,12 @@ const CurrentlyPlaying = () => {
               {trackData?.artists?.map((artist, index) =>
                 trackData?.artists.length > 1 ? (
                   index === trackData?.artists.length - 1 ? (
-                    <span>{artist?.name}</span>
+                    <span key={artist?.name}>{artist?.name}</span>
                   ) : (
-                    <span>{artist?.name + ", "}</span>
+                    <span key={artist?.name}>{artist?.name + ", "}</span>
                   )
                 ) : (
-                  <span>{artist?.name}</span>
+                  <span key={artist?.name}>{artist?.name}</span>
                 )
               )}
             </span>

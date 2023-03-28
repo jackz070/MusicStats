@@ -20,7 +20,34 @@ body {
     max-width: 300px;
   }
 }
+.next-button_container {
+  display: flex;
+  gap: 0.5rem;
 
+  .next-button {
+    margin: 20px 0;
+    font-size: 1.25rem;
+    background: none;
+    border: none;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: black;
+    background-color: white;
+    padding: 0.25rem 0.5rem;
+    transition: all 0.2s;
+    &:hover {
+      text-decoration: underline;
+      -webkit-box-shadow: 8px 9px 0px -6px rgba(255, 255, 255, 1);
+      -moz-box-shadow: 8px 9px 0px -6px rgba(255, 255, 255, 1);
+      box-shadow: 8px 9px 0px -6px rgba(255, 255, 255, 1);
+    }
+
+    &:active {
+      transform: scale(0.96);
+    }
+  }
+}
 /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
 
 /* Document

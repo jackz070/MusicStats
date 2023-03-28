@@ -1,10 +1,12 @@
+.navbar-background {
+  background-color: rgb(16, 16, 16);
+}
 .navbar {
   color: white;
   font-size: 1.25rem;
 
   position: sticky;
   top: 0;
-  background-color: rgb(16, 16, 16);
 
   z-index: 50;
 

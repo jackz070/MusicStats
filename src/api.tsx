@@ -5,6 +5,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import * as SpotifyApi from "spotify-api";
 
 const baseURL = import.meta.env.VITE_baseURL;
 const clientId = import.meta.env.VITE_clientId;
@@ -17,7 +18,7 @@ const SPOTIFY = {
   TOKEN_TYPE: "SPOTIFY_TOKEN_TYPE",
 };
 
-export const generateState = (length) => {
+export const generateState = (length: number) => {
   let text = "";
 
   const possible =
@@ -29,11 +30,36 @@ export const generateState = (length) => {
 
   return text;
 };
-
-const spotifyContext = createContext();
+interface GenreData {
+  text: string;
+  value: number;
+}
+export interface SpotifyContextType {
+  user: SpotifyApi.CurrentUsersProfileResponse | null;
+  login: () => void;
+  logout: () => void;
+  isLoading: boolean;
+  readonly hasLoggedIn: boolean;
+  storeTokenAtRedirect: () => void;
+  fetchUserInfo: () => void;
+  topArtists: SpotifyApi.UsersTopArtistsResponse | undefined;
+  topTracks: SpotifyApi.UsersTopTracksResponse | undefined;
+  currentlyPlaying: SpotifyApi.CurrentlyPlayingResponse | null;
+  changeTimeRange: (value: string) => void;
+  fetchPrevTracks: () => void;
+  fetchNextTracks: () => void;
+  fetchNextArtists: () => void;
+  fetchPrevArtists: () => void;
+  timeRange: string;
+  isFetching: boolean;
+  genreData: GenreData[] | null;
+  recentlyPlayed: SpotifyApi.UsersRecentlyPlayedTracksResponse | null;
+}
+// TODO: build initial state
+const spotifyContext = createContext<SpotifyContextType>({});
 spotifyContext.displayName = "SpotifyContext";
 
-export const SpotifyProvider = ({ children }) => {
+export const SpotifyProvider = ({ children }: { children: ReactFragment }) => {
   const spotify = useProvideSpotify();
 
   return (
@@ -49,18 +75,32 @@ export const useSpotify = () => {
 
 const useProvideSpotify = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState(null);
+  const [user, setUser] =
+    useState<SpotifyApi.CurrentUsersProfileResponse | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [tokenExpiry, setTokenExpiry] = useState(null);
-  const [topArtists, setTopArtists] = useState(null);
-  const [topTracks, setTopTracks] = useState(null);
+  const [tokenExpiry, setTokenExpiry] = useState<number | null>(null);
+  const [topArtists, setTopArtists] = useState<
+    SpotifyApi.UsersTopArtistsResponse | undefined
+  >(undefined);
+  const [topTracks, setTopTracks] = useState<
+    SpotifyApi.UsersTopTracksResponse | undefined
+  >(undefined);
   const [timeRange, setTimeRange] = useState("medium_term");
   const [isFetching, setIsFetching] = useState(false);
-  const [currentlyPlaying, setCurrentlyPlaying] = useState(null);
-  const [genreData, setGenreData] = useState(null);
-  const [recentlyPlayed, setRecentlyPlayed] = useState(null);
+  const [currentlyPlaying, setCurrentlyPlaying] =
+    useState<SpotifyApi.CurrentlyPlayingResponse | null>(null);
+  const [genreData, setGenreData] = useState<GenreData[] | null>(null);
+  const [recentlyPlayed, setRecentlyPlayed] =
+    useState<SpotifyApi.UsersRecentlyPlayedTracksResponse | null>(null);
 
-  const callApiEndpoint = async ({ path, method = "GET" }) => {
+  const callApiEndpoint = async ({
+    path,
+    method = "GET",
+  }: {
+    path: string;
+    method?: string;
+    token: string | null | undefined;
+  }) => {
     if (hasTokenExpired()) {
       invalidateToken();
       throw new Error("Token has expired");
@@ -96,14 +136,19 @@ const useProvideSpotify = () => {
         throw new Error();
       }
       const accessToken = searchParams.get("access_token");
-      const expiresIn = parseInt(searchParams.get("expires_in"), 10);
+      const expiresIn = parseInt(searchParams.get("expires_in") || "", 10);
       const tokenType = searchParams.get("token_type");
 
       const expTimestamp = Math.floor(Date.now() / 1000 + expiresIn);
 
-      window.localStorage.setItem(SPOTIFY.ACCESS_TOKEN, accessToken);
-      window.localStorage.setItem(SPOTIFY.EXP_TIMESTAMP, expTimestamp);
-      window.localStorage.setItem(SPOTIFY.TOKEN_TYPE, tokenType);
+      if (accessToken && tokenType) {
+        window.localStorage.setItem(SPOTIFY.ACCESS_TOKEN, accessToken);
+        window.localStorage.setItem(
+          SPOTIFY.EXP_TIMESTAMP,
+          expTimestamp.toString()
+        );
+        window.localStorage.setItem(SPOTIFY.TOKEN_TYPE, tokenType);
+      }
       setToken(accessToken);
       setTokenExpiry(expTimestamp);
     } catch (err) {
@@ -138,7 +183,7 @@ const useProvideSpotify = () => {
         token || window.localStorage.getItem(SPOTIFY.ACCESS_TOKEN);
       const expTimestamp =
         tokenExpiry ||
-        parseInt(window.localStorage.getItem(SPOTIFY.EXP_TIMESTAMP), 10);
+        parseInt(window.localStorage.getItem(SPOTIFY.EXP_TIMESTAMP) || "", 10);
 
       if (!accessToken || !expTimestamp || isNaN(expTimestamp)) {
         return false;
@@ -166,7 +211,7 @@ const useProvideSpotify = () => {
     }
   };
 
-  const changeTimeRange = (value) => {
+  const changeTimeRange = (value: string) => {
     if (
       value === "short_term" ||
       value === "medium_term" ||
@@ -212,7 +257,7 @@ const useProvideSpotify = () => {
     });
   };
 
-  const fetchTopTracks = async (pathProp?) => {
+  const fetchTopTracks = async (pathProp?: string) => {
     const callPath = pathProp
       ? `/me/top/tracks?${pathProp?.split("?")[1] || ""}`
       : `/me/top/tracks?limit=20&offset=0`;
@@ -222,7 +267,7 @@ const useProvideSpotify = () => {
     });
   };
 
-  const fetchTopArtists = async (pathProp?) => {
+  const fetchTopArtists = async (pathProp?: string) => {
     const callPath = pathProp
       ? `/me/top/artists?${pathProp?.split("?")[1] || ""}`
       : `/me/top/artists?limit=20&offset=0`;
@@ -254,7 +299,10 @@ const useProvideSpotify = () => {
   const fetchNextTracks = async () => {
     setIsFetching(true);
     try {
-      const tracksData = await fetchTopTracks(topTracks?.next);
+      if (!topTracks?.next) {
+        return;
+      }
+      const tracksData = await fetchTopTracks(topTracks.next);
       setTopTracks(tracksData);
       setIsFetching(false);
     } catch (err) {
@@ -265,7 +313,10 @@ const useProvideSpotify = () => {
   const fetchPrevTracks = async () => {
     setIsFetching(true);
     try {
-      const tracksData = await fetchTopTracks(topTracks?.previous);
+      if (!topTracks?.previous) {
+        return;
+      }
+      const tracksData = await fetchTopTracks(topTracks.previous);
       setTopTracks(tracksData);
       setIsFetching(false);
     } catch (err) {
@@ -276,7 +327,10 @@ const useProvideSpotify = () => {
   const fetchNextArtists = async () => {
     setIsFetching(true);
     try {
-      const artistsData = await fetchTopArtists(topArtists?.next);
+      if (!topArtists?.next) {
+        return;
+      }
+      const artistsData = await fetchTopArtists(topArtists.next);
       setIsFetching(false);
       setTopArtists(artistsData);
     } catch (err) {
@@ -287,7 +341,10 @@ const useProvideSpotify = () => {
   const fetchPrevArtists = async () => {
     setIsFetching(true);
     try {
-      const artistsData = await fetchTopArtists(topArtists?.previous);
+      if (!topArtists?.previous) {
+        return;
+      }
+      const artistsData = await fetchTopArtists(topArtists.previous);
       setIsFetching(false);
       setTopArtists(artistsData);
     } catch (err) {
@@ -296,18 +353,19 @@ const useProvideSpotify = () => {
   };
 
   const getGenreData = async () => {
-    const allTopArtists = await callApiEndpoint({
-      path: `/me/top/artists?limit=50&offset=0&time_range=${timeRange}`,
-      token,
-    });
+    const allTopArtists: SpotifyApi.UsersTopArtistsResponse =
+      await callApiEndpoint({
+        path: `/me/top/artists?limit=50&offset=0&time_range=${timeRange}`,
+        token,
+      });
 
-    const genres = [];
+    const genres: string[] = [];
     const fillGenres = () =>
       allTopArtists?.items?.forEach((artist) =>
         artist?.genres?.forEach((genre) => genres.push(genre))
       );
     fillGenres();
-    const tally = [];
+    const tally: GenreData[] = [];
     const tallyGenres = () => {
       genres.forEach((genre) => {
         const found = tally.findIndex((item) => item.text === genre);
@@ -324,7 +382,7 @@ const useProvideSpotify = () => {
     try {
       const accessToken = window.localStorage.getItem(SPOTIFY.ACCESS_TOKEN);
       const expTimestamp = parseInt(
-        window.localStorage.getItem(SPOTIFY.EXP_TIMESTAMP),
+        window.localStorage.getItem(SPOTIFY.EXP_TIMESTAMP) || "",
         10
       );
 

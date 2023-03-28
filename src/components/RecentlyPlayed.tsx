@@ -2,23 +2,28 @@ import React, { useEffect, useState } from "react";
 import { useSpotify } from "../api";
 import { InfinitySpin } from "react-loader-spinner";
 import Spotify_icon from "../../public/Spotify_icon.png";
+import SpotifyApi from "spotify-api";
 
 const RecentlyPlayed = () => {
   const { recentlyPlayed, isLoading, isFetching } = useSpotify();
 
-  const [trackData, setTrackData] = useState({});
+  const [trackData, setTrackData] = useState<{
+    items: SpotifyApi.TrackObjectFull[];
+    next: string | null;
+  }>();
 
   useEffect(() => {
     const formatData = () => {
-      const tempData = { items: [], next: null, prev: null };
+      const tempData: {
+        items: SpotifyApi.TrackObjectFull[];
+        next: string | null;
+      } = { items: [], next: null };
 
       recentlyPlayed?.items?.forEach((item) => tempData.items.push(item.track));
       if (recentlyPlayed?.next) {
         tempData.next = recentlyPlayed?.next;
       }
-      if (recentlyPlayed?.prev) {
-        tempData.prev = recentlyPlayed?.prev;
-      }
+
       setTrackData(tempData);
     };
     formatData();
@@ -52,12 +57,14 @@ const RecentlyPlayed = () => {
                         {item.artists.map((artist, index) =>
                           item?.artists.length > 1 ? (
                             index === item?.artists?.length - 1 ? (
-                              <span>{artist?.name}</span>
+                              <span key={artist?.name}>{artist?.name}</span>
                             ) : (
-                              <span>{artist?.name + ", "}</span>
+                              <span key={artist?.name}>
+                                {artist?.name + ", "}
+                              </span>
                             )
                           ) : (
-                            <span>{artist?.name}</span>
+                            <span key={artist?.name}>{artist?.name}</span>
                           )
                         )}
                       </div>

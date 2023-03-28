@@ -1,16 +1,25 @@
 .loginPage {
   display: flex;
   flex-direction: column;
-  height: 70vh;
+  height: 90vh;
   justify-content: center;
   color: white;
   font-size: 1.25rem;
 
   h2 {
     margin-bottom: 4px;
+    font-size: 4rem;
   }
   p {
     margin-bottom: 36px;
+  }
+
+  .login-hero {
+    font-size: 1.5rem;
+
+    .login-hero_large {
+      font-size: 3rem;
+    }
   }
 
   button {
@@ -43,5 +52,6 @@
   .login-notice {
     font-size: 0.6rem;
     margin-top: 1rem;
+    text-align: center;
   }
 }

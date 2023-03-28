@@ -39,12 +39,14 @@ const TopTracks = () => {
                           {item.artists.map((artist, index) =>
                             item?.artists.length > 1 ? (
                               index === item?.artists?.length - 1 ? (
-                                <span>{artist?.name}</span>
+                                <span key={artist?.name}>{artist?.name}</span>
                               ) : (
-                                <span>{artist?.name + ", "}</span>
+                                <span key={artist?.name}>
+                                  {artist?.name + ", "}
+                                </span>
                               )
                             ) : (
-                              <span>{artist?.name}</span>
+                              <span key={artist?.name}>{artist?.name}</span>
                             )
                           )}
                         </div>
@@ -61,12 +63,16 @@ const TopTracks = () => {
               </a>
             ))}
           </div>
-          <div>
+          <div className="next-button_container">
             {topTracks?.previous && (
-              <button onClick={() => fetchPrevTracks()}>prev</button>
+              <button onClick={() => fetchPrevTracks()} className="next-button">
+                prev
+              </button>
             )}
             {topTracks?.next && (
-              <button onClick={() => fetchNextTracks()}>next</button>
+              <button onClick={() => fetchNextTracks()} className="next-button">
+                next
+              </button>
             )}
           </div>
         </div>

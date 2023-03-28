@@ -18,7 +18,7 @@ const GenreCloud = () => {
               rotate={0}
               fontSize={(word) => word.value * 12}
               font="Open Sans"
-              height={550}
+              height={530}
               padding={5}
               onWordMouseOver={(d, i) => {
                 d.target.style.textDecoration = "underline";

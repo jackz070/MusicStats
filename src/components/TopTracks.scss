@@ -1,21 +1,4 @@
 .top_tracks {
-
-
-  button {
-    margin: 20px 0;
-    font-size: 1.25rem;
-    background: none;
-    border: none;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: white;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
   .top-tracks_container {
     max-width: 95vw;
     .top-tracks_table {

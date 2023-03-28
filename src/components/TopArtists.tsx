@@ -11,6 +11,10 @@ const TopArtists = () => {
     fetchPrevArtists,
     isFetching,
   } = useSpotify();
+
+  // TODO: each artists, tracks and genres get button for recomendations based on top 5 of those
+  // TODO: that button is animated, loads and when ready a popup opens with recommended tracks
+  // TODO: the tracks (and also current tracks in top...) can be added to favs with a heart button and added to custom playlists
   return (
     <section id="top_artists">
       <h2>Top Artists</h2>
@@ -52,13 +56,23 @@ const TopArtists = () => {
               </div>
             ))}
           </div>
-          <div>
+          <div className="next-button_container">
             {" "}
             {topArtists?.previous && (
-              <button onClick={() => fetchPrevArtists()}>prev</button>
+              <button
+                onClick={() => fetchPrevArtists()}
+                className="next-button"
+              >
+                prev
+              </button>
             )}
             {topArtists?.next && (
-              <button onClick={() => fetchNextArtists()}>next</button>
+              <button
+                onClick={() => fetchNextArtists()}
+                className="next-button"
+              >
+                next
+              </button>
             )}
           </div>
         </div>

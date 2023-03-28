@@ -32,6 +32,10 @@
       background-color: #636489;
       transform: scale(1.4);
     }
+
+    &:active {
+      transform: scale(1.2);
+    }
   }
 
   .active {
