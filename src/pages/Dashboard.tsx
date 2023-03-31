@@ -12,8 +12,8 @@ const Dashboard = () => {
     <div id="dashboard">
       <UserInfo />
       <CurrentlyPlaying />
-      <TopArtists />
       <TopTracks />
+      <TopArtists />
       <GenreCloud />
       <FloatingBar />
       <RecentlyPlayed />

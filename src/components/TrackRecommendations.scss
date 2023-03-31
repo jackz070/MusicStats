@@ -1,0 +1,78 @@
+.recommendations_open-button {
+  font-size: 0.75rem;
+  border: 1px solid white;
+  border-radius: 20px;
+  padding: 0.15rem 0.75rem;
+  margin-top: 0.5rem;
+  margin-left: 1rem;
+  color: white;
+  background: none;
+  height: 30px;
+  transition: all 0.8s;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.03);
+  }
+}
+
+#recommendations_modal-container {
+  position: fixed;
+  z-index: 100;
+  height: 120vh;
+  top: -10%;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  h2,
+  p {
+    color: white;
+    margin: 0;
+  }
+
+  p {
+    margin-bottom: 2rem;
+  }
+
+  .recommendations_modal-content {
+    background-color: #006b67;
+    height: 60%;
+    width: 500px;
+    padding: 3rem 2rem;
+    margin-top: 6rem;
+    position: relative;
+
+    @media screen and (max-width: 500px) {
+      width: 95%;
+    }
+
+    .recommendations_modal-tracks {
+      overflow: scroll;
+      height: 80%;
+    }
+
+    .recommendations_modal-button_close {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+
+      filter: saturate(0);
+      font-size: 1.5rem;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s;
+
+      &:hover {
+        transform: scale(1.2);
+      }
+    }
+  }
+}

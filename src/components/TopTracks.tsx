@@ -2,80 +2,47 @@ import React from "react";
 import { useSpotify } from "../api";
 import { InfinitySpin } from "react-loader-spinner";
 import Spotify_icon from "../../public/Spotify_icon.png";
+import SingleTrack from "./DisplayTracks/SingleTrack";
+import TrackList from "./DisplayTracks/TrackList";
+import TrackRecommendations from "./TrackRecommendations";
 
 const TopTracks = () => {
   const { topTracks, isLoading, fetchPrevTracks, fetchNextTracks, isFetching } =
     useSpotify();
-  // TODO extract this table so that it can be also used by recently played
+
   return (
-    <section className="top_tracks">
-      <h2>Top Tracks</h2>
+    <section id="top_tracks">
+      <div className="top-tracks_header">
+        <h2>Top Tracks</h2>
+        <TrackRecommendations seed={topTracks} type="tracks" />
+      </div>
       {isLoading && <div>Loading...</div>}
       {topTracks && (
-        <div className="top-tracks_container">
-          <div className="top-tracks_table">
-            {topTracks?.items?.map((item, index) => (
-              <a
-                href={`http://open.spotify.com/track/${item.id}`}
-                target="_blank"
-                key={index}
-                className="top-tracks_table-item"
-              >
-                {isFetching ? (
-                  <div className="top-tracks_table-item_fetching">
-                    <InfinitySpin color="white" width="100" />
-                  </div>
-                ) : (
-                  <>
-                    {" "}
-                    <img
-                      src={item.album.images[0].url}
-                      className="top-tracks_table-item_img"
-                    />
-                    <div className="top-tracks_table-item_data">
-                      <div>
-                        <div className="top-tracks_table-name">{item.name}</div>
-                        <div className="top-tracks_table-artist">
-                          {item.artists.map((artist, index) =>
-                            item?.artists.length > 1 ? (
-                              index === item?.artists?.length - 1 ? (
-                                <span key={artist?.name}>{artist?.name}</span>
-                              ) : (
-                                <span key={artist?.name}>
-                                  {artist?.name + ", "}
-                                </span>
-                              )
-                            ) : (
-                              <span key={artist?.name}>{artist?.name}</span>
-                            )
-                          )}
-                        </div>
-                      </div>
-                      <div className="top-tracks_table-item_spotify-icon-container">
-                        <img
-                          src={Spotify_icon}
-                          className="top-tracks_table-item_spotify-icon"
-                        />
-                      </div>
-                    </div>
-                  </>
-                )}
-              </a>
-            ))}
-          </div>
-          <div className="next-button_container">
-            {topTracks?.previous && (
-              <button onClick={() => fetchPrevTracks()} className="next-button">
-                prev
-              </button>
-            )}
-            {topTracks?.next && (
-              <button onClick={() => fetchNextTracks()} className="next-button">
-                next
-              </button>
-            )}
-          </div>
-        </div>
+        <TrackList
+          trackData={topTracks}
+          tracksAreFetchable={true}
+          next={fetchNextTracks}
+          prev={fetchPrevTracks}
+        />
+        // <div className="top-tracks_container">
+        //   <div className="top-tracks_table">
+        //     {topTracks?.items?.map((item, index) => (
+        //       <SingleTrack item={item} fetchable={true} key={index} />
+        //     ))}
+        //   </div>
+        //   <div className="next-button_container">
+        //     {topTracks?.previous && (
+        //       <button onClick={() => fetchPrevTracks()} className="next-button">
+        //         prev
+        //       </button>
+        //     )}
+        //     {topTracks?.next && (
+        //       <button onClick={() => fetchNextTracks()} className="next-button">
+        //         next
+        //       </button>
+        //     )}
+        //   </div>
+        // </div>
       )}
     </section>
   );

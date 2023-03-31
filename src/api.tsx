@@ -92,6 +92,8 @@ const useProvideSpotify = () => {
   const [genreData, setGenreData] = useState<GenreData[] | null>(null);
   const [recentlyPlayed, setRecentlyPlayed] =
     useState<SpotifyApi.UsersRecentlyPlayedTracksResponse | null>(null);
+  const [recommendations, setRecommendations] = useState(null);
+  const [fetchingRecommendations, setFetchingRecommendations] = useState(false);
 
   const callApiEndpoint = async ({
     path,
@@ -135,6 +137,7 @@ const useProvideSpotify = () => {
       if (window.location.href.includes("error")) {
         throw new Error();
       }
+
       const accessToken = searchParams.get("access_token");
       const expiresIn = parseInt(searchParams.get("expires_in") || "", 10);
       const tokenType = searchParams.get("token_type");
@@ -282,14 +285,15 @@ const useProvideSpotify = () => {
     try {
       loadCurrentlyPlaying();
 
+      const tracksData = await fetchTopTracks();
+      setTopTracks(tracksData);
+
       const artistsData = await fetchTopArtists();
       setTopArtists(artistsData);
-
-      const tracksData = await fetchTopTracks();
-
-      setTopTracks(tracksData);
-      loadRecentlyPlayed();
-      getGenreData();
+      setTimeout(() => {
+        loadRecentlyPlayed();
+        getGenreData();
+      }, 1000);
       setIsFetching(false);
     } catch (err) {
       console.error(err);
@@ -378,6 +382,46 @@ const useProvideSpotify = () => {
     tallyGenres();
   };
 
+  const fetchTrackRecommendations = async (seedValue, seedType) => {
+    try {
+      setFetchingRecommendations(true);
+      const recommendations = await callApiEndpoint({
+        path: `/recommendations?limit=20&seed_${seedType}=${seedValue}`,
+        token,
+      });
+      setRecommendations(recommendations);
+      setFetchingRecommendations(false);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const checkIfSaved = async (id) => {
+    try {
+      const callPath = `/me/tracks/contains?ids=${id}`;
+      return await callApiEndpoint({
+        path: `${callPath}`,
+        token,
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const changeSaved = async (id, method) => {
+    try {
+      // if response status is 200 confirm success
+      const callPath = `/me/tracks?ids=${id}`;
+      return await callApiEndpoint({
+        path: `${callPath}`,
+        method,
+        token,
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     try {
       const accessToken = window.localStorage.getItem(SPOTIFY.ACCESS_TOKEN);
@@ -438,5 +482,11 @@ const useProvideSpotify = () => {
     isFetching,
     genreData,
     recentlyPlayed,
+    fetchTrackRecommendations,
+    recommendations,
+    fetchingRecommendations,
+    setRecommendations,
+    checkIfSaved,
+    changeSaved,
   };
 };

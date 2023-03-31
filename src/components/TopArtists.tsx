@@ -2,6 +2,7 @@ import React from "react";
 import { useSpotify } from "../api";
 import { InfinitySpin } from "react-loader-spinner";
 import Spotify_icon from "../../public/Spotify_icon.png";
+import TrackRecommendations from "./TrackRecommendations";
 
 const TopArtists = () => {
   const {
@@ -12,12 +13,12 @@ const TopArtists = () => {
     isFetching,
   } = useSpotify();
 
-  // TODO: each artists, tracks and genres get button for recomendations based on top 5 of those
-  // TODO: that button is animated, loads and when ready a popup opens with recommended tracks
-  // TODO: the tracks (and also current tracks in top...) can be added to favs with a heart button and added to custom playlists
   return (
     <section id="top_artists">
-      <h2>Top Artists</h2>
+      <div className="top_artists-header">
+        <h2>Top Artists</h2>
+        <TrackRecommendations seed={topArtists} type="artists" />
+      </div>
       {isLoading && <div>Loading...</div>}
 
       {topArtists && (

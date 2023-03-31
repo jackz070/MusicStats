@@ -2,7 +2,10 @@
   .top-artists_table-card-fetching {
     margin: auto auto;
   }
-
+  .top_artists-header {
+    display: flex;
+    align-items: center;
+  }
   .top-artists_container {
     a {
       text-decoration: none;

@@ -6,7 +6,7 @@ import LoadingSpinner from "./LoadingSpinner";
 const GenreCloud = () => {
   const { genreData, isFetching } = useSpotify();
   return (
-    <section className="genre-cloud_containter">
+    <section className="genre-cloud_containter" id="top_genres">
       <h2>Top Genres</h2>
       {isFetching ? (
         <LoadingSpinner />

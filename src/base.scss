@@ -6,6 +6,12 @@
 body {
   background-color: rgb(16, 16, 16);
   color: white;
+  scroll-behavior: smooth;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
 }
 
 .pageContainer {

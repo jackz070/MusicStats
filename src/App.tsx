@@ -11,6 +11,7 @@ import SpotifyRedirect from "./pages/SpotifyRedirect";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import { Navbar } from "./components/Navbar";
+import { ErrorBoundary } from "react-error-boundary";
 
 function App() {
   const {
@@ -32,11 +33,22 @@ function App() {
     ])
   );
 
+  const Fallback = ({ error, resetErrorBoundary }) => {
+    return (
+      <div role="alert">
+        <p>Something went wrong:</p>
+        <pre style={{ color: "red" }}>{error.message}</pre>
+      </div>
+    );
+  };
+
   return (
     <div>
       <Navbar />
       <div className="pageContainer">
-        <RouterProvider router={router} />
+        <ErrorBoundary fallbackRender={Fallback}>
+          <RouterProvider router={router} />
+        </ErrorBoundary>
       </div>
     </div>
   );

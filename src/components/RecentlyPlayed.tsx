@@ -3,6 +3,8 @@ import { useSpotify } from "../api";
 import { InfinitySpin } from "react-loader-spinner";
 import Spotify_icon from "../../public/Spotify_icon.png";
 import SpotifyApi from "spotify-api";
+import SingleTrack from "./DisplayTracks/SingleTrack";
+import TrackList from "./DisplayTracks/TrackList";
 
 const RecentlyPlayed = () => {
   const { recentlyPlayed, isLoading, isFetching } = useSpotify();
@@ -30,57 +32,19 @@ const RecentlyPlayed = () => {
   }, [recentlyPlayed]);
 
   return (
-    <section className="top_tracks">
+    <section className="top_tracks" id="recently_played">
       <h2>Recently Played</h2>
       {isLoading && <div>Loading...</div>}
 
       {trackData && (
-        <div className="top-tracks_container">
-          <div className="top-tracks_table">
-            {trackData?.items?.map((item, index) => (
-              <a
-                href={`http://open.spotify.com/track/${item.id}`}
-                target="_blank"
-                key={index}
-                className="top-tracks_table-item"
-              >
-                <>
-                  {" "}
-                  <img
-                    src={item.album.images[0].url}
-                    className="top-tracks_table-item_img"
-                  />
-                  <div className="top-tracks_table-item_data">
-                    <div>
-                      <div className="top-tracks_table-name">{item.name}</div>
-                      <div className="top-tracks_table-artist">
-                        {item.artists.map((artist, index) =>
-                          item?.artists.length > 1 ? (
-                            index === item?.artists?.length - 1 ? (
-                              <span key={artist?.name}>{artist?.name}</span>
-                            ) : (
-                              <span key={artist?.name}>
-                                {artist?.name + ", "}
-                              </span>
-                            )
-                          ) : (
-                            <span key={artist?.name}>{artist?.name}</span>
-                          )
-                        )}
-                      </div>
-                    </div>
-                    <div className="top-tracks_table-item_spotify-icon-container">
-                      <img
-                        src={Spotify_icon}
-                        className="top-tracks_table-item_spotify-icon"
-                      />
-                    </div>
-                  </div>
-                </>
-              </a>
-            ))}
-          </div>
-        </div>
+        <TrackList trackData={trackData} tracksAreFetchable={false} />
+        // <div className="top-tracks_container">
+        //   <div className="top-tracks_table">
+        //     {trackData?.items?.map((item, index) => (
+        //       <SingleTrack item={item} key={index} />
+        //     ))}
+        //   </div>
+        // </div>
       )}
     </section>
   );
