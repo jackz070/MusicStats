@@ -17,7 +17,6 @@ const TrackList = ({
   next?: () => void;
   prev?: () => void;
 }) => {
-  
   if (trackData?.tracks) {
     trackData.items = trackData.tracks;
   }

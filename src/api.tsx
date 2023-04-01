@@ -285,8 +285,8 @@ const useProvideSpotify = () => {
     try {
       loadCurrentlyPlaying();
 
-      const tracksData = await fetchTopTracks();
-      setTopTracks(tracksData);
+      // const tracksData = await fetchTopTracks();
+      // setTopTracks(tracksData);
 
       const artistsData = await fetchTopArtists();
       setTopArtists(artistsData);
@@ -461,7 +461,9 @@ const useProvideSpotify = () => {
   }, [timeRange]);
 
   return {
+    callApiEndpoint,
     user,
+    token,
     login,
     logout,
     isLoading,

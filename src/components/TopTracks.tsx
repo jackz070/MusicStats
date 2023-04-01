@@ -5,10 +5,12 @@ import Spotify_icon from "../../public/Spotify_icon.png";
 import SingleTrack from "./DisplayTracks/SingleTrack";
 import TrackList from "./DisplayTracks/TrackList";
 import TrackRecommendations from "./TrackRecommendations";
+import { useSpotifyTopTracks } from "../api/useSpotifyTopTracks";
 
 const TopTracks = () => {
-  const { topTracks, isLoading, fetchPrevTracks, fetchNextTracks, isFetching } =
-    useSpotify();
+  const { isLoading, isFetching } = useSpotify();
+
+  const { fetchPrevTracks, fetchNextTracks, topTracks } = useSpotifyTopTracks();
 
   return (
     <section id="top_tracks">
