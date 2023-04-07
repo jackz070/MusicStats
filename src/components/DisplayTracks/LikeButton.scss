@@ -1,0 +1,16 @@
+.saved_button {
+  width: 45px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: lightgray;
+  svg {
+    fill: lightgray;
+  }
+
+  &:hover {
+    color: white;
+    svg {
+      fill: white;
+    }
+  }
+}

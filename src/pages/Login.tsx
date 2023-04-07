@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useSpotify } from "../api";
+import { useSpotify } from "../api/api";
 import bgVideo from "../../public/abstract-71292.mp4";
 
 const Login = () => {

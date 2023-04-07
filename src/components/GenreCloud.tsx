@@ -1,6 +1,6 @@
 import React from "react";
 import WordCloud from "react-d3-cloud";
-import { useSpotify } from "../api";
+import { useSpotify } from "../api/api";
 import LoadingSpinner from "./LoadingSpinner";
 
 const GenreCloud = () => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSpotify } from "../api";
+import { useSpotify } from "../api/api";
 import LoadingSpinner from "./LoadingSpinner";
 import SpotifyApi from "spotify-api";
 
@@ -27,25 +27,55 @@ const CurrentlyPlaying = () => {
         <div className="currently_playing-info">
           <img src={trackData?.album?.images?.[1]?.url} height="50px" />
           <div>
-            <div className="currently_playing-info_name">{trackData?.name}</div>{" "}
+            <a
+              href={trackData?.external_urls?.spotify}
+              target="_blank"
+              className="currently_playing-info_name"
+            >
+              {trackData?.name}
+            </a>{" "}
             <span className="currently_playing-aside">by</span>{" "}
             <span className="currently_playing-info_artist">
               {trackData?.artists?.map((artist, index) =>
                 trackData?.artists.length > 1 ? (
                   index === trackData?.artists.length - 1 ? (
-                    <span key={artist?.name}>{artist?.name}</span>
+                    <a
+                      href={artist?.external_urls?.spotify}
+                      target="_blank"
+                      key={artist?.name}
+                    >
+                      {artist?.name}
+                    </a>
                   ) : (
-                    <span key={artist?.name}>{artist?.name + ", "}</span>
+                    <a
+                      href={artist?.external_urls?.spotify}
+                      target="_blank"
+                      key={artist?.name}
+                    >
+                      {artist?.name + ", "}
+                    </a>
                   )
                 ) : (
-                  <span key={artist?.name}>{artist?.name}</span>
+                  <a
+                    href={artist?.external_urls?.spotify}
+                    target="_blank"
+                    key={artist?.name}
+                  >
+                    {artist?.name}
+                  </a>
                 )
               )}
             </span>
-            <div className="currently_playing-info_album">
-              <span className="currently_playing-aside">from</span>{" "}
+            <a className="currently_playing-info_album">
+              <span
+                href={trackData?.album?.external_urls?.spotify}
+                target="_blank"
+                className="currently_playing-aside"
+              >
+                from
+              </span>{" "}
               {trackData?.album?.name}
-            </div>
+            </a>
           </div>
         </div>
       )}

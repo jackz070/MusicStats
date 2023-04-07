@@ -6,10 +6,12 @@ import CurrentlyPlaying from "../components/CurrentlyPlaying";
 import FloatingBar from "../components/FloatingBar";
 import RecentlyPlayed from "../components/RecentlyPlayed";
 import UserInfo from "../components/UserInfo";
+import { Toaster } from "react-hot-toast";
 
 const Dashboard = () => {
   return (
     <div id="dashboard">
+      <Toaster />
       <UserInfo />
       <CurrentlyPlaying />
       <TopTracks />

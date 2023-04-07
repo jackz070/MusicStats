@@ -1,11 +1,29 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
-import { useSpotify } from "../api";
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  ReactFragment,
+} from "react";
+import { useSpotify } from "./api";
 import SpotifyApi from "spotify-api";
+import { TrackObjectFullExtendedWithSaved } from "./api";
+
+interface SpotifyTopTracksContextType {
+  topTracks: SpotifyApi.UsersTopTracksResponse | undefined;
+  topTracksAreFetching: boolean;
+  fetchPrevTracks: () => void;
+  fetchNextTracks: () => void;
+}
 
 const spotifyTopTracksContext = createContext({});
 spotifyTopTracksContext.displayName = "spotifyTopTracksContext";
 
-export const SpotifyTopTracksContextProvider = ({ children }) => {
+export const SpotifyTopTracksContextProvider = ({
+  children,
+}: {
+  children: ReactFragment;
+}) => {
   const spotifyTopTracks = useProvideSpotifyTopTracks();
 
   return (
@@ -25,7 +43,8 @@ const useProvideSpotifyTopTracks = () => {
     SpotifyApi.UsersTopTracksResponse | undefined
   >(undefined);
 
-  const { callApiEndpoint, timeRange, token, user } = useSpotify();
+  const { callApiEndpoint, timeRange, token, user, checkIfSaved } =
+    useSpotify();
 
   const fetchTopTracks = async (pathProp?: string) => {
     const callPath = pathProp
@@ -37,10 +56,21 @@ const useProvideSpotifyTopTracks = () => {
     });
   };
 
+  const appendSavedStatusToTracks = async (tracksData: {
+    items: TrackObjectFullExtendedWithSaved[];
+  }) => {
+    const trackIds: string[] = [];
+    tracksData.items.forEach((track) => trackIds.push(track.id));
+    const savedData = await checkIfSaved(trackIds);
+
+    tracksData.items.forEach((item, index) => (item.saved = savedData[index]));
+  };
+
   const loadSpotifyTopTracks = async () => {
     setTopTracksAreFetching(true);
     try {
       const tracksData = await fetchTopTracks();
+      await appendSavedStatusToTracks(tracksData);
       setTopTracks(tracksData);
     } catch (err) {
       console.error(err);
@@ -54,6 +84,7 @@ const useProvideSpotifyTopTracks = () => {
         return;
       }
       const tracksData = await fetchTopTracks(topTracks.next);
+      await appendSavedStatusToTracks(tracksData);
       setTopTracks(tracksData);
       setTopTracksAreFetching(false);
     } catch (err) {
@@ -68,6 +99,7 @@ const useProvideSpotifyTopTracks = () => {
         return;
       }
       const tracksData = await fetchTopTracks(topTracks.previous);
+      await appendSavedStatusToTracks(tracksData);
       setTopTracks(tracksData);
       setTopTracksAreFetching(false);
     } catch (err) {

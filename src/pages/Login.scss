@@ -33,6 +33,7 @@
     cursor: pointer;
     transition: all 0.15s;
     border: none;
+    min-height: 56px;
 
     &:hover {
       filter: brightness(0.9);

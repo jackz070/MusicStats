@@ -1,0 +1,9 @@
+.top-tracks_container {
+  max-width: 95vw;
+
+  .top-tracks_table {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}

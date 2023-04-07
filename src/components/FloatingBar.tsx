@@ -1,5 +1,5 @@
 import React from "react";
-import { useSpotify } from "../api";
+import { useSpotify } from "../api/api";
 
 const FloatingBar = () => {
   const { timeRange, changeTimeRange } = useSpotify();

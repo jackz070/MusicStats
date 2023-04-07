@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useSpotify } from "../api";
+import { useSpotify } from "../api/api";
 import { ReactSVG } from "react-svg";
 import { motion, Variants } from "framer-motion";
 
@@ -29,7 +29,10 @@ export const Navbar = () => {
           initial={false}
           animate={showSettings ? "open" : "closed"}
         >
-          <img src={user?.images?.[0].url} className="user-info_data-image" />
+          <img
+            src={user?.images?.[0]?.url || "../public/user-3296.png"}
+            className="user-info_data-image"
+          />
 
           <motion.div className="user-info_data-settings_button">
             <motion.div

@@ -7,6 +7,9 @@ import {
 } from "react";
 import * as SpotifyApi from "spotify-api";
 
+// TODO add provider checks for all hooks, maybe as a wrapper?
+// TODO ?? rewrite it with usereducer
+
 const baseURL = import.meta.env.VITE_baseURL;
 const clientId = import.meta.env.VITE_clientId;
 const redirectUri = import.meta.env.VITE_redirectUri;
@@ -30,12 +33,26 @@ export const generateState = (length: number) => {
 
   return text;
 };
+
+export interface TrackObjectFullExtendedWithSaved
+  extends SpotifyApi.TrackObjectFull {
+  saved: boolean;
+}
 interface GenreData {
   text: string;
   value: number;
 }
 export interface SpotifyContextType {
+  callApiEndpoint: ({
+    path,
+    method,
+  }: {
+    path: string;
+    method?: string | undefined;
+    token: string | null | undefined;
+  }) => Promise<any>;
   user: SpotifyApi.CurrentUsersProfileResponse | null;
+  token: string | null;
   login: () => void;
   logout: () => void;
   isLoading: boolean;
@@ -43,17 +60,17 @@ export interface SpotifyContextType {
   storeTokenAtRedirect: () => void;
   fetchUserInfo: () => void;
   topArtists: SpotifyApi.UsersTopArtistsResponse | undefined;
-  topTracks: SpotifyApi.UsersTopTracksResponse | undefined;
   currentlyPlaying: SpotifyApi.CurrentlyPlayingResponse | null;
   changeTimeRange: (value: string) => void;
-  fetchPrevTracks: () => void;
-  fetchNextTracks: () => void;
   fetchNextArtists: () => void;
   fetchPrevArtists: () => void;
   timeRange: string;
   isFetching: boolean;
   genreData: GenreData[] | null;
   recentlyPlayed: SpotifyApi.UsersRecentlyPlayedTracksResponse | null;
+  checkIfSaved: (id: any) => Promise<any>;
+  changeSaved: (id: any, method: any) => Promise<any>;
+  appendSavedStatusToTracks: (tracksData: any) => Promise<void>;
 }
 // TODO: build initial state
 const spotifyContext = createContext<SpotifyContextType>({});
@@ -82,9 +99,7 @@ const useProvideSpotify = () => {
   const [topArtists, setTopArtists] = useState<
     SpotifyApi.UsersTopArtistsResponse | undefined
   >(undefined);
-  const [topTracks, setTopTracks] = useState<
-    SpotifyApi.UsersTopTracksResponse | undefined
-  >(undefined);
+
   const [timeRange, setTimeRange] = useState("medium_term");
   const [isFetching, setIsFetching] = useState(false);
   const [currentlyPlaying, setCurrentlyPlaying] =
@@ -92,8 +107,6 @@ const useProvideSpotify = () => {
   const [genreData, setGenreData] = useState<GenreData[] | null>(null);
   const [recentlyPlayed, setRecentlyPlayed] =
     useState<SpotifyApi.UsersRecentlyPlayedTracksResponse | null>(null);
-  const [recommendations, setRecommendations] = useState(null);
-  const [fetchingRecommendations, setFetchingRecommendations] = useState(false);
 
   const callApiEndpoint = async ({
     path,
@@ -243,10 +256,35 @@ const useProvideSpotify = () => {
     }
   };
 
+  const appendSavedStatusToTracks = async (tracksData: {
+    items: SpotifyApi.TrackObjectFull[];
+  }) => {
+    console.log(tracksData);
+
+    const trackIds: string[] = [];
+    tracksData.items.forEach((track) => trackIds.push(track.id));
+    const savedData = await checkIfSaved(trackIds);
+
+    tracksData.items.forEach((item, index) => (item.saved = savedData[index]));
+  };
+
   const loadRecentlyPlayed = async () => {
+    setIsFetching(true);
     try {
-      const recentlyPlayedData = await fetchRecentlyPlayed();
+      const recentlyPlayedData: SpotifyApi.UsersRecentlyPlayedTracksResponse =
+        await fetchRecentlyPlayed();
+
+      const tempItems: { items: SpotifyApi.TrackObjectFull[] } = { items: [] };
+      recentlyPlayedData?.items?.forEach((item) =>
+        tempItems.items.push(item.track)
+      );
+      appendSavedStatusToTracks(tempItems);
+
+      tempItems.items.forEach(
+        (item, index) => (recentlyPlayedData.items[index].track = item)
+      );
       setRecentlyPlayed(recentlyPlayedData);
+      setIsFetching(false);
     } catch (err) {
       console.error(err);
     }
@@ -256,16 +294,6 @@ const useProvideSpotify = () => {
     const callPath = `/me/player/recently-played?limit=50`;
     return await callApiEndpoint({
       path: `${callPath}`,
-      token,
-    });
-  };
-
-  const fetchTopTracks = async (pathProp?: string) => {
-    const callPath = pathProp
-      ? `/me/top/tracks?${pathProp?.split("?")[1] || ""}`
-      : `/me/top/tracks?limit=20&offset=0`;
-    return await callApiEndpoint({
-      path: `${callPath}&time_range=${timeRange}`,
       token,
     });
   };
@@ -284,48 +312,15 @@ const useProvideSpotify = () => {
     setIsFetching(true);
     try {
       loadCurrentlyPlaying();
-
-      // const tracksData = await fetchTopTracks();
-      // setTopTracks(tracksData);
-
       const artistsData = await fetchTopArtists();
       setTopArtists(artistsData);
-      setTimeout(() => {
-        loadRecentlyPlayed();
-        getGenreData();
-      }, 1000);
-      setIsFetching(false);
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
-  const fetchNextTracks = async () => {
-    setIsFetching(true);
-    try {
-      if (!topTracks?.next) {
-        return;
-      }
-      const tracksData = await fetchTopTracks(topTracks.next);
-      setTopTracks(tracksData);
-      setIsFetching(false);
+      loadRecentlyPlayed();
+      getGenreData();
     } catch (err) {
       console.error(err);
     }
-  };
-
-  const fetchPrevTracks = async () => {
-    setIsFetching(true);
-    try {
-      if (!topTracks?.previous) {
-        return;
-      }
-      const tracksData = await fetchTopTracks(topTracks.previous);
-      setTopTracks(tracksData);
-      setIsFetching(false);
-    } catch (err) {
-      console.error(err);
-    }
+    setIsFetching(false);
   };
 
   const fetchNextArtists = async () => {
@@ -382,20 +377,6 @@ const useProvideSpotify = () => {
     tallyGenres();
   };
 
-  const fetchTrackRecommendations = async (seedValue, seedType) => {
-    try {
-      setFetchingRecommendations(true);
-      const recommendations = await callApiEndpoint({
-        path: `/recommendations?limit=20&seed_${seedType}=${seedValue}`,
-        token,
-      });
-      setRecommendations(recommendations);
-      setFetchingRecommendations(false);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const checkIfSaved = async (id) => {
     try {
       const callPath = `/me/tracks/contains?ids=${id}`;
@@ -408,7 +389,7 @@ const useProvideSpotify = () => {
     }
   };
 
-  const changeSaved = async (id, method) => {
+  const changeSaved = async (id: string, method: string) => {
     try {
       // if response status is 200 confirm success
       const callPath = `/me/tracks?ids=${id}`;
@@ -473,21 +454,15 @@ const useProvideSpotify = () => {
     storeTokenAtRedirect,
     fetchUserInfo,
     topArtists,
-    topTracks,
     currentlyPlaying,
     changeTimeRange,
-    fetchPrevTracks,
-    fetchNextTracks,
     fetchNextArtists,
     fetchPrevArtists,
     timeRange,
     isFetching,
     genreData,
     recentlyPlayed,
-    fetchTrackRecommendations,
-    recommendations,
-    fetchingRecommendations,
-    setRecommendations,
+    appendSavedStatusToTracks,
     checkIfSaved,
     changeSaved,
   };

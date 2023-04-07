@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSpotify } from "../api";
+import { useSpotify } from "../api/api";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
 

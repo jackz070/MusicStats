@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSpotify } from "../api";
+import { useSpotify } from "../api/api";
 import { InfinitySpin } from "react-loader-spinner";
 import Spotify_icon from "../../public/Spotify_icon.png";
 import SpotifyApi from "spotify-api";
@@ -7,7 +7,7 @@ import SingleTrack from "./DisplayTracks/SingleTrack";
 import TrackList from "./DisplayTracks/TrackList";
 
 const RecentlyPlayed = () => {
-  const { recentlyPlayed, isLoading, isFetching } = useSpotify();
+  const { recentlyPlayed, isLoading, isFetching, checkIfSaved } = useSpotify();
 
   const [trackData, setTrackData] = useState<{
     items: SpotifyApi.TrackObjectFull[];
@@ -36,7 +36,7 @@ const RecentlyPlayed = () => {
       <h2>Recently Played</h2>
       {isLoading && <div>Loading...</div>}
 
-      {trackData && (
+      {trackData && !isFetching && (
         <TrackList trackData={trackData} tracksAreFetchable={false} />
         // <div className="top-tracks_container">
         //   <div className="top-tracks_table">

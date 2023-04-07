@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSpotify } from "./api";
+import { useSpotify } from "./api/api";
 import {
   createBrowserRouter,
   RouterProvider,

@@ -1,5 +1,5 @@
 import React from "react";
-import { useSpotify } from "../api";
+import { useSpotify } from "../api/api";
 import { InfinitySpin } from "react-loader-spinner";
 import Spotify_icon from "../../public/Spotify_icon.png";
 import TrackRecommendations from "./TrackRecommendations";
