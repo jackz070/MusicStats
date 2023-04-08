@@ -4,6 +4,10 @@
   height: 60px;
   transition: all 0.8s;
   cursor: default;
+  width: 100%;
+  position: relative;
+
+  container-type: size;
 
   background: linear-gradient(
     30deg,
@@ -43,12 +47,17 @@
     justify-content: center;
     width: 100%;
   }
+
   .top-tracks_table-item_data {
     display: flex;
     width: 100%;
-
+    position: relative;
     align-items: center;
     justify-content: space-between;
+
+    @media screen and (max-width: 730px) {
+      font-size: 0.8rem;
+    }
   }
 
   .top-tracks_table-item_img {
@@ -65,23 +74,45 @@
     margin: 0 10px;
     max-width: 50vw;
     display: block;
+    @media screen and (max-width: 700px) {
+      max-width: 35vw;
+      min-width: 240px;
+    }
+    @media screen and (max-width: 500px) {
+      max-width: 25vw;
+      min-width: 100px;
+    }
 
     &:hover {
       text-decoration: underline;
-    }
-
-    @media screen and (max-width: 700px) {
-      max-width: 50vw;
     }
   }
 
   .top-tracks_table-artist {
     font-weight: 300;
     margin-left: 10px;
+
+    max-height: 1.2rem;
+    display: block;
+    max-width: 50vw;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    @media screen and (max-width: 700px) {
+      max-width: 35vw;
+      min-width: 240px;
+    }
+    @media screen and (max-width: 500px) {
+      max-width: 25vw;
+      min-width: 100px;
+    }
+
     a:hover {
       text-decoration: underline;
     }
   }
+
   .top-tracks_table-item_spotify-icon-container {
     display: flex;
     align-items: center;
@@ -99,3 +130,9 @@
     }
   }
 }
+
+// @container (max-width: 550px) {
+//   .top-tracks_table-name {
+//     width: 20%;
+//   }
+// }
