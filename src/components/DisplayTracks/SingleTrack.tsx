@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { InfinitySpin } from "react-loader-spinner";
-import Spotify_icon from "../../../public/Spotify_icon.png";
+import Spotify_icon from "../../assets/Spotify_icon.png";
 import { useSpotify } from "../../api/api";
 import SpotifyApi from "spotify-api";
 import { motion, AnimatePresence, easeIn } from "framer-motion";
@@ -91,12 +91,12 @@ const SingleTrack = ({
               {item.preview_url && (
                 <PreviewPlayer preview_url={item.preview_url} />
               )}
-              <a href={`http://open.spotify.com/track/${item.id}`}>
+              {/* <a href={`http://open.spotify.com/track/${item.id}`}>
                 <img
                   src={Spotify_icon}
                   className="top-tracks_table-item_spotify-icon"
                 />
-              </a>
+              </a> */}
             </div>
           </div>
         </>

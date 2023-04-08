@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSpotify } from "../api/api";
 import { InfinitySpin } from "react-loader-spinner";
-import Spotify_icon from "../../public/Spotify_icon.png";
+import Spotify_icon from "../assets/Spotify_icon.png";
 import SpotifyApi from "spotify-api";
 import SingleTrack from "./DisplayTracks/SingleTrack";
 import TrackList from "./DisplayTracks/TrackList";

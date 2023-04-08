@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useSpotify } from "../api/api";
 import { ReactSVG } from "react-svg";
 import { motion, Variants } from "framer-motion";
+import SpotifyLogo from "../assets/Spotify_Logo_CMYK_White.png";
 
 const itemVariants: Variants = {
   open: {
@@ -17,8 +18,11 @@ export const Navbar = () => {
   const { user, logout } = useSpotify();
   return (
     <nav className={`navbar ${user && "navbar-background"}`}>
-      <div>
+      <div className="navbar_logo">
         <h1>MusicStats</h1>
+        <div className="navbar_logo-bottom">
+          <span>for</span> <img src={SpotifyLogo} />
+        </div>
       </div>
 
       {user && (
@@ -30,7 +34,7 @@ export const Navbar = () => {
           animate={showSettings ? "open" : "closed"}
         >
           <img
-            src={user?.images?.[0]?.url || "../public/user-3296.png"}
+            src={user?.images?.[0]?.url || "../assets/user-3296.png"}
             className="user-info_data-image"
           />
 
@@ -51,11 +55,6 @@ export const Navbar = () => {
 
           <motion.ul
             className="user-info_menu"
-            // initial={{
-            //   opacity: 0,
-            //   y: 0,
-            // }}
-            // animate={{ opacity: 1, y: 20 }}
             variants={{
               open: {
                 clipPath: "inset(0% 0% 0% 0% round 10px)",
