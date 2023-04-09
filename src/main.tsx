@@ -6,6 +6,7 @@ import "./main.scss";
 import { SpotifyTopTracksContextProvider } from "./api/useSpotifyTopTracks";
 import { SpotifyTrackRecommendationsContextProvider } from "./api/useTrackRecommendations";
 import { AudioPlayersContextProvider } from "./hooks/useAudioPlayers";
+import { SpotifyPlaylistsContextProvider } from "./api/useSpotifyPlaylists";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
@@ -13,7 +14,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <SpotifyTopTracksContextProvider>
         <SpotifyTrackRecommendationsContextProvider>
           <AudioPlayersContextProvider>
-            <App />
+            <SpotifyPlaylistsContextProvider>
+              <App />
+            </SpotifyPlaylistsContextProvider>
           </AudioPlayersContextProvider>
         </SpotifyTrackRecommendationsContextProvider>
       </SpotifyTopTracksContextProvider>

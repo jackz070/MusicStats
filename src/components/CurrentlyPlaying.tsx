@@ -66,16 +66,15 @@ const CurrentlyPlaying = () => {
                 )
               )}
             </span>
-            <a className="currently_playing-info_album">
-              <span
+            <div className="currently_playing-info_album">
+              <span className="currently_playing-aside">from</span>{" "}
+              <a
                 href={trackData?.album?.external_urls?.spotify}
                 target="_blank"
-                className="currently_playing-aside"
               >
-                from
-              </span>{" "}
-              {trackData?.album?.name}
-            </a>
+                {trackData?.album?.name}
+              </a>
+            </div>
           </div>
         </div>
       )}

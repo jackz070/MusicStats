@@ -71,6 +71,16 @@ export interface SpotifyContextType {
   checkIfSaved: (id: any) => Promise<any>;
   changeSaved: (id: any, method: any) => Promise<any>;
   appendSavedStatusToTracks: (tracksData: any) => Promise<void>;
+  callApiEndpointWithBody: ({
+    path,
+    method,
+    body,
+  }: {
+    path: string;
+    method?: string | undefined;
+    token: string | null | undefined;
+    body?: string | null;
+  }) => Promise<any>;
 }
 // TODO: build initial state
 const spotifyContext = createContext<SpotifyContextType>({});
@@ -127,6 +137,32 @@ const useProvideSpotify = () => {
           Authorization: `Bearer ${token}`,
         },
         method,
+      })
+    ).json();
+  };
+
+  const callApiEndpointWithBody = async ({
+    path,
+    method = "GET",
+    body,
+  }: {
+    path: string;
+    method?: string;
+    token: string | null | undefined;
+    body?: string;
+  }) => {
+    if (hasTokenExpired()) {
+      invalidateToken();
+      throw new Error("Token has expired");
+    }
+
+    return await (
+      await fetch(`${baseURL}${path}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        method,
+        body,
       })
     ).json();
   };
@@ -465,5 +501,6 @@ const useProvideSpotify = () => {
     appendSavedStatusToTracks,
     checkIfSaved,
     changeSaved,
+    callApiEndpointWithBody,
   };
 };

@@ -9,6 +9,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import LikeButton from "./LikeButton";
 import PreviewPlayer from "./PreviewPlayer";
+import TempPlaylists from "../TempPlaylists";
 
 const SingleTrack = ({
   item,
@@ -87,6 +88,7 @@ const SingleTrack = ({
               </div>
             </div>
             <div className="top-tracks_table-item_spotify-icon-container">
+              <TempPlaylists track={item} />
               <LikeButton itemId={item.id} saved={saved} />{" "}
               {item.preview_url && (
                 <PreviewPlayer preview_url={item.preview_url} />

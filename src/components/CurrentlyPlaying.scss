@@ -63,5 +63,8 @@
 
   .currently_playing-info_album {
     display: block;
+    a {
+      cursor: pointer;
+    }
   }
 }
