@@ -1,12 +1,12 @@
 .preview_player-button {
-  width: 35px;
-  height: 35px;
+  width: 30px;
+  height: 30px;
   cursor: pointer;
 
   .preview_player-icon {
     margin-left: 2px;
-    height: 16px;
-    width: 16px;
+    height: 15px;
+    width: 15px;
 
     @media screen and (max-width: 730px) {
       height: 12px;

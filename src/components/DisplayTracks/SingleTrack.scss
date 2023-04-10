@@ -7,8 +7,6 @@
   width: 100%;
   position: relative;
 
-  container-type: size;
-
   background: linear-gradient(
     30deg,
     #c921cf 0%,
@@ -23,7 +21,9 @@
   -webkit-box-shadow: 8px 9px 0px -5px rgba(255, 255, 255, 1);
   -moz-box-shadow: 8px 9px 0px -5px rgba(255, 255, 255, 1);
   box-shadow: 8px 9px 0px -5px rgba(255, 255, 255, 1);
-
+  * {
+    letter-spacing: 0;
+  }
   &:hover {
     background: linear-gradient(
       120deg,
@@ -54,8 +54,7 @@
     position: relative;
     align-items: center;
     justify-content: space-between;
-
-    @media screen and (max-width: 730px) {
+    @media screen and (max-width: 800px) {
       font-size: 0.8rem;
     }
   }
@@ -74,13 +73,14 @@
     margin: 0 10px;
     max-width: 60vw;
     display: block;
+
     @media screen and (max-width: 730px) {
       max-width: 41vw;
       min-width: 240px;
       margin-left: 6px;
     }
     @media screen and (max-width: 500px) {
-      max-width: 34vw;
+      max-width: 37vw;
       min-width: 100px;
       margin-left: 2px;
     }

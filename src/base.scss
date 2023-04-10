@@ -2,6 +2,10 @@
   font-family: "Open Sans";
   letter-spacing: 1px;
   scroll-behavior: smooth;
+
+  @media screen and (max-width: 730px) {
+    letter-spacing: 0;
+  }
 }
 
 body {
@@ -20,6 +24,10 @@ button {
   color: white;
 }
 
+h1 {
+  letter-spacing: 1px;
+}
+
 section h2 {
 }
 
@@ -32,7 +40,7 @@ section h2 {
   max-width: 700px;
 
   @media screen and (max-width: 700px) {
-    max-width: 300px;
+    max-width: 350px;
   }
 }
 .next-button_container {

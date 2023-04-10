@@ -7,7 +7,6 @@ import FloatingBar from "../components/FloatingBar";
 import RecentlyPlayed from "../components/RecentlyPlayed";
 import UserInfo from "../components/UserInfo";
 import { Toaster } from "react-hot-toast";
-import TempPlaylists from "../components/TempPlaylists";
 
 const Dashboard = () => {
   return (
@@ -15,7 +14,6 @@ const Dashboard = () => {
       <Toaster />
       <UserInfo />
       <CurrentlyPlaying />
-      <TempPlaylists />
       <TopTracks />
       <TopArtists />
       <GenreCloud />

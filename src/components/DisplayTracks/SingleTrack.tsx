@@ -9,7 +9,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import LikeButton from "./LikeButton";
 import PreviewPlayer from "./PreviewPlayer";
-import TempPlaylists from "../TempPlaylists";
+import TempPlaylists from "../Playlists";
 
 const SingleTrack = ({
   item,

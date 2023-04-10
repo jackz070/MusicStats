@@ -42,6 +42,7 @@ export const useSpotifyPlaylists = () => {
 const useProvideSpotifyPlaylists = () => {
   const [userPlaylists, setUserPlaylists] = useState(null);
   const [fetchingPlaylists, setFetchingPlaylists] = useState(false);
+  const [dropdownIsOpen, setDropdownIsOpen] = useState(false);
 
   const { callApiEndpoint, callApiEndpointWithBody, token, user } =
     useSpotify();
@@ -58,6 +59,7 @@ const useProvideSpotifyPlaylists = () => {
   };
 
   const loadUserPlaylists = async () => {
+    setUserPlaylists(null);
     try {
       setFetchingPlaylists(true);
       const playlists = await fetchUserPlaylists();
@@ -101,24 +103,28 @@ const useProvideSpotifyPlaylists = () => {
   };
 
   const addTrackToPlaylist = async (playlistId, trackUri) => {
-    await callApiEndpoint({
-      path: `/playlists/${playlistId}/tracks?uris=${trackUri}`,
-      method: "POST",
-      token,
-    });
+    if (playlistId && trackUri) {
+      return await callApiEndpoint({
+        path: `/playlists/${playlistId}/tracks?uris=${trackUri}`,
+        method: "POST",
+        token,
+      });
+    }
   };
 
   const createNewPlaylist = async (playlistName: string) => {
-    return await callApiEndpointWithBody({
-      path: `/users/${user.id}/playlists`,
-      method: "POST",
-      token,
-      body: JSON.stringify({
-        name: `${playlistName}`,
-        public: false,
-        description: "Created with MusicStats for Spotify",
-      }),
-    });
+    if (playlistName) {
+      return await callApiEndpointWithBody({
+        path: `/users/${user.id}/playlists`,
+        method: "POST",
+        token,
+        body: JSON.stringify({
+          name: `${playlistName}`,
+          public: false,
+          description: "Created with MusicStats for Spotify",
+        }),
+      });
+    }
   };
 
   return {
@@ -128,5 +134,8 @@ const useProvideSpotifyPlaylists = () => {
     fetchNextPlaylists,
     addTrackToPlaylist,
     createNewPlaylist,
+    fetchingPlaylists,
+    dropdownIsOpen,
+    setDropdownIsOpen,
   };
 };
