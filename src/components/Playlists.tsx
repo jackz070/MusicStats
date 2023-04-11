@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useSpotifyPlaylists } from "../api/useSpotifyPlaylists";
-import { AnimatePresence, motion, Variants, easeIn } from "framer-motion";
+import { AnimatePresence, motion, Variants } from "framer-motion";
 import toast from "react-hot-toast";
 import LoadingSpinner from "./LoadingSpinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,7 +8,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 const notifyAboutAddingToPlaylist = (playlistName) =>
   toast(`Added to ${playlistName}`);
-// TODO position modal / popover based on position on the screen of open button (if its on the bottom, modal goes up, if on top - it goes down)
+
 const notifyAboutPlaylistCreation = (playlistName) =>
   toast(`${playlistName} created`);
 const notifyAboutError = (error) => toast(`Error:${error}`);
@@ -26,6 +26,9 @@ const TempPlaylists = (track) => {
   const [isCreatingPlaylist, setIsCreatingPlaylist] = useState(false);
   const [newPlaylistName, setNewPlaylistName] = useState("");
   const [submitButtonContent, setSubmitButtonContent] = useState("+");
+  const [positionY, setPositionY] = useState(0);
+  const [positionX, setPositionX] = useState(0);
+
   const {
     userPlaylists,
     loadUserPlaylists,
@@ -41,7 +44,9 @@ const TempPlaylists = (track) => {
   const playlistsDropdown = useRef();
   const playlistsDropdownButton = useRef();
 
-  const handleOpenPlaylistsDropdown = () => {
+  const handleOpenPlaylistsDropdown = (e) => {
+    console.log(e);
+
     if (!dropdownIsOpen) {
       console.log("open");
       loadUserPlaylists();
@@ -55,6 +60,8 @@ const TempPlaylists = (track) => {
     if (!newPlaylistName) {
       setIsCreatingPlaylist(false);
     }
+    setPositionY(0);
+    setPositionX(0);
   };
 
   const handleDropdownButtonClick = () => {
@@ -104,16 +111,23 @@ const TempPlaylists = (track) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showPlaylistsDropdown]);
-  // TODO fix CSS issue container type size on single track breaks aboslute positionoing on this component
-  // TODO loading states & add success state
-  // TODO create playlist feedback and add current track to newly created playlist
-  // TODO when creating playlist add it to displayed list
-  // TODO styling: animate dropdown, loading, nice list items, plus icon to add, playlist add icon on opening button
 
+  const handleDropdownPositioning = (e) => {
+    console.log(e.clientY, window.innerHeight);
+    if (window.innerWidth > 500) {
+      setPositionY(0.4 * -e.clientY);
+      setPositionX(-250);
+    } else {
+      setPositionY(140);
+    }
+  };
   return (
     <div className="playlists" ref={playlistsDropdown}>
       <motion.button
-        onClick={() => handleDropdownButtonClick()}
+        onClick={(e) => {
+          handleDropdownPositioning(e);
+          handleDropdownButtonClick();
+        }}
         className="playlists_open-button"
         style={showPlaylistsDropdown && { fill: "white" }}
         whileTap={{ scale: 0.96 }}
@@ -134,9 +148,9 @@ const TempPlaylists = (track) => {
         {showPlaylistsDropdown && (
           <motion.div
             className="playlists_container"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: positionX, y: 0 }}
+            animate={{ opacity: 1, x: positionX, y: positionY }}
+            exit={{ opacity: 0, y: positionY + 100 }}
             transition={{}}
           >
             <div className="playlists_container-header">
@@ -151,15 +165,21 @@ const TempPlaylists = (track) => {
               onSubmit={(e) => handleCreateNewPlaylist(e)}
               className="playlist_create-form"
             >
-              <input
+              <motion.input
                 type="text"
                 name="playlistName"
                 placeholder="Create New Playlist"
                 value={newPlaylistName}
                 onChange={(e) => setNewPlaylistName(e.target.value)}
+                initial={{ width: "0%" }}
+                animate={{ width: "90%" }}
+                transition={{ duration: 0.2, origin: 1 }}
               />
               <motion.button
                 type="submit"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
                 whileTap={{ scale: 1 }}
                 whileHover={{ scale: 1.5 }}
               >

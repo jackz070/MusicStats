@@ -20,6 +20,7 @@ interface TrackListProps {
   tracksAreFetchable: boolean;
   next?: () => void;
   prev?: () => void;
+  widthSmall?: boolean;
 }
 
 const TrackList = ({
@@ -27,6 +28,7 @@ const TrackList = ({
   tracksAreFetchable,
   next,
   prev,
+  widthSmall = false,
 }: TrackListProps) => {
   if (trackData?.tracks) {
     trackData.items = trackData.tracks;
@@ -41,6 +43,7 @@ const TrackList = ({
             fetchable={tracksAreFetchable}
             key={index}
             saved={item.saved}
+            widthSmall={widthSmall}
           />
         ))}
       </div>

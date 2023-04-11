@@ -20,9 +20,11 @@ const SingleTrack = ({
   item: SpotifyApi.TrackObjectFull;
   saved: boolean;
   fetchable?: boolean;
+  widthSmall?: boolean;
 }) => {
   const { topTracksAreFetching } = useSpotifyTopTracks();
   const { isFetching } = useSpotify();
+
 
   return (
     <motion.div
@@ -51,11 +53,17 @@ const SingleTrack = ({
               <a
                 href={item?.external_urls?.spotify}
                 target="_blank"
-                className="top-tracks_table-name"
+                className={`top-tracks_table-name ${
+                  widthSmall && "top-tracks_table-name_small"
+                }`}
               >
                 {item.name}
               </a>
-              <div className="top-tracks_table-artist">
+              <div
+                className={`top-tracks_table-artist ${
+                  widthSmall && "top-tracks_table-artist_small"
+                }`}
+              >
                 {item.artists.map((artist, index) =>
                   item?.artists.length > 1 ? (
                     index === item?.artists?.length - 1 ? (

@@ -107,6 +107,7 @@ const TrackRecommendations = ({
                   <TrackList
                     trackData={recommendations}
                     tracksAreFetchable={false}
+                    widthSmall={true}
                   />
                 </div>
               )}

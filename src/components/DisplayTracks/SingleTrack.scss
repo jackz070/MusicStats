@@ -71,7 +71,7 @@
     overflow: hidden;
     height: 1.2rem;
     margin: 0 10px;
-    max-width: 60vw;
+    max-width: 480px;
     display: block;
 
     @media screen and (max-width: 730px) {
@@ -89,6 +89,9 @@
       text-decoration: underline;
     }
   }
+  .top-tracks_table-name_small {
+    max-width: 280px;
+  }
 
   .top-tracks_table-artist {
     font-weight: 300;
@@ -96,7 +99,7 @@
 
     max-height: 1.2rem;
     display: block;
-    max-width: 50vw;
+    max-width: 280px;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -114,6 +117,11 @@
 
     a:hover {
       text-decoration: underline;
+    }
+  }
+  @media screen and (min-width: 730px) {
+    .top-tracks_table-artist_small {
+      max-width: 280px;
     }
   }
 

@@ -3,6 +3,7 @@ import { useSpotify } from "../api/api";
 import { InfinitySpin } from "react-loader-spinner";
 import Spotify_icon from "../assets/Spotify_icon.png";
 import TrackRecommendations from "./TrackRecommendations";
+import { usePopper } from "react-popper";
 
 const TopArtists = () => {
   const {

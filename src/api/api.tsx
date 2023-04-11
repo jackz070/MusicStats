@@ -8,7 +8,6 @@ import {
 import * as SpotifyApi from "spotify-api";
 
 // TODO add provider checks for all hooks, maybe as a wrapper?
-// TODO ?? rewrite it with usereducer
 
 const baseURL = import.meta.env.VITE_baseURL;
 const clientId = import.meta.env.VITE_clientId;

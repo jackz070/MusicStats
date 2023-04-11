@@ -16,7 +16,7 @@ interface SpotifyTopTracksContextType {
   fetchNextTracks: () => void;
 }
 
-const spotifyTopTracksContext = createContext({});
+const spotifyTopTracksContext = createContext<SpotifyTopTracksContextType>({});
 spotifyTopTracksContext.displayName = "spotifyTopTracksContext";
 
 export const SpotifyTopTracksContextProvider = ({

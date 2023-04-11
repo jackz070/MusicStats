@@ -18,7 +18,7 @@
 
 #recommendations_modal-container {
   position: fixed;
-  z-index: 100;
+  z-index: 10;
   height: 120vh;
   top: -10%;
   left: 0;
@@ -75,8 +75,8 @@
     }
 
     .recommendations_modal-tracks {
-      overflow: scroll;
       height: 80%;
+      overflow-y: scroll;
     }
 
     .recommendations_modal-button_close {

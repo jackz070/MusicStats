@@ -8,17 +8,19 @@ import React, {
 import { useSpotify } from "./api";
 import SpotifyApi from "spotify-api";
 
-// interface SpotifyPlaylistsContextType {
-//   recommendations: SpotifyApi.RecommendationTrackObject | null;
-//   fetchingRecommendations: boolean;
-//   setRecommendations: React.Dispatch<React.SetStateAction<null>>;
-//   fetchTrackRecommendations: (
-//     seedValue: string[],
-//     seedType: string
-//   ) => Promise<void>;
-// }
+interface SpotifyPlaylistsContextType {
+  userPlaylists: SpotifyApi.ListOfCurrentUsersPlaylistsResponse | null;
+  loadUserPlaylists: () => Promise<void>;
+  fetchPrevPlaylists: () => Promise<void>;
+  fetchNextPlaylists: () => Promise<void>;
+  addTrackToPlaylist: (playlistId: any, trackUri: any) => Promise<any>;
+  createNewPlaylist: (playlistName: string) => Promise<any>;
+  fetchingPlaylists: boolean;
+  dropdownIsOpen: boolean;
+  setDropdownIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-const SpotifyPlaylistsContext = createContext({});
+const SpotifyPlaylistsContext = createContext<SpotifyPlaylistsContextType>({});
 SpotifyPlaylistsContext.displayName = "spotifyPlaylistsContext";
 
 export const SpotifyPlaylistsContextProvider = ({
@@ -40,7 +42,8 @@ export const useSpotifyPlaylists = () => {
 };
 
 const useProvideSpotifyPlaylists = () => {
-  const [userPlaylists, setUserPlaylists] = useState(null);
+  const [userPlaylists, setUserPlaylists] =
+    useState<SpotifyApi.ListOfCurrentUsersPlaylistsResponse | null>(null);
   const [fetchingPlaylists, setFetchingPlaylists] = useState(false);
   const [dropdownIsOpen, setDropdownIsOpen] = useState(false);
 
@@ -102,7 +105,7 @@ const useProvideSpotifyPlaylists = () => {
     }
   };
 
-  const addTrackToPlaylist = async (playlistId, trackUri) => {
+  const addTrackToPlaylist = async (playlistId: string, trackUri: string) => {
     if (playlistId && trackUri) {
       return await callApiEndpoint({
         path: `/playlists/${playlistId}/tracks?uris=${trackUri}`,
@@ -115,7 +118,7 @@ const useProvideSpotifyPlaylists = () => {
   const createNewPlaylist = async (playlistName: string) => {
     if (playlistName) {
       return await callApiEndpointWithBody({
-        path: `/users/${user.id}/playlists`,
+        path: `/users/${user?.id}/playlists`,
         method: "POST",
         token,
         body: JSON.stringify({
