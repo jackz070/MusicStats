@@ -4,16 +4,29 @@ import React, {
   useEffect,
   useContext,
   ReactFragment,
+  PropsWithChildren,
 } from "react";
 
-const AudioPlayersContext = createContext({});
+interface AudioPlayersType {
+  playerIsPlaying: boolean;
+  setPlayerIsPlaying: React.Dispatch<React.SetStateAction<boolean>>;
+  triggerPauseAll: boolean;
+  setTriggerPauseAll: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const initialState = {
+  playerIsPlaying: false,
+  setPlayerIsPlaying: () => {},
+  triggerPauseAll: false,
+  setTriggerPauseAll: () => {},
+};
+
+const AudioPlayersContext = createContext<AudioPlayersType>(initialState);
 AudioPlayersContext.displayName = "AudioPlayersContext";
 
 export const AudioPlayersContextProvider = ({
   children,
-}: {
-  children: ReactFragment;
-}) => {
+}: PropsWithChildren) => {
   const AudioPlayers = useProvideAudioPlayers();
 
   return (

@@ -37,14 +37,8 @@ const RecentlyPlayed = () => {
       {isLoading && <div>Loading...</div>}
 
       {trackData && !isFetching && (
+        //@ts-ignore
         <TrackList trackData={trackData} tracksAreFetchable={false} />
-        // <div className="top-tracks_container">
-        //   <div className="top-tracks_table">
-        //     {trackData?.items?.map((item, index) => (
-        //       <SingleTrack item={item} key={index} />
-        //     ))}
-        //   </div>
-        // </div>
       )}
     </section>
   );

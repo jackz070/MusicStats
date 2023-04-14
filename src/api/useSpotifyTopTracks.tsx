@@ -1,4 +1,5 @@
 import React, {
+  PropsWithChildren,
   createContext,
   useState,
   useContext,
@@ -9,6 +10,13 @@ import { useSpotify } from "./api";
 import SpotifyApi from "spotify-api";
 import { TrackObjectFullExtendedWithSaved } from "./api";
 
+const initialState = {
+  topTracks: undefined,
+  topTracksAreFetching: true,
+  fetchPrevTracks: () => Promise.resolve(),
+  fetchNextTracks: () => Promise.resolve(),
+};
+
 interface SpotifyTopTracksContextType {
   topTracks: SpotifyApi.UsersTopTracksResponse | undefined;
   topTracksAreFetching: boolean;
@@ -16,14 +24,13 @@ interface SpotifyTopTracksContextType {
   fetchNextTracks: () => void;
 }
 
-const spotifyTopTracksContext = createContext<SpotifyTopTracksContextType>({});
+const spotifyTopTracksContext =
+  createContext<SpotifyTopTracksContextType>(initialState);
 spotifyTopTracksContext.displayName = "spotifyTopTracksContext";
 
 export const SpotifyTopTracksContextProvider = ({
   children,
-}: {
-  children: ReactFragment;
-}) => {
+}: PropsWithChildren) => {
   const spotifyTopTracks = useProvideSpotifyTopTracks();
 
   return (
@@ -72,6 +79,8 @@ const useProvideSpotifyTopTracks = () => {
       const tracksData = await fetchTopTracks();
       await appendSavedStatusToTracks(tracksData);
       setTopTracks(tracksData);
+
+      setTopTracksAreFetching(false);
     } catch (err) {
       console.error(err);
     }
@@ -108,10 +117,8 @@ const useProvideSpotifyTopTracks = () => {
   };
 
   useEffect(() => {
-    setTopTracksAreFetching(true);
     if (token) {
       loadSpotifyTopTracks();
-      setTopTracksAreFetching(false);
     }
   }, [timeRange, user]);
 

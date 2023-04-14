@@ -5,29 +5,23 @@ import toast from "react-hot-toast";
 import LoadingSpinner from "./LoadingSpinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import SpotifyApi from "spotify-api";
 
-const notifyAboutAddingToPlaylist = (playlistName) =>
+const notifyAboutAddingToPlaylist = (playlistName: string) =>
   toast(`Added to ${playlistName}`);
 
-const notifyAboutPlaylistCreation = (playlistName) =>
+const notifyAboutPlaylistCreation = (playlistName: string) =>
   toast(`${playlistName} created`);
-const notifyAboutError = (error) => toast(`Error:${error}`);
-const itemVariants: Variants = {
-  open: {
-    opacity: 1,
-    y: 0,
-    transition: { type: "spring", stiffness: 300, damping: 24 },
-  },
-  closed: { opacity: 0, y: 20, transition: { duration: 0.2 } },
-};
 
-const TempPlaylists = (track) => {
+const Playlists = ({ track }: { track: SpotifyApi.TrackObjectFull }) => {
   const [showPlaylistsDropdown, setShowPlaylistsDropdown] = useState(false);
   const [isCreatingPlaylist, setIsCreatingPlaylist] = useState(false);
   const [newPlaylistName, setNewPlaylistName] = useState("");
   const [submitButtonContent, setSubmitButtonContent] = useState("+");
   const [positionY, setPositionY] = useState(0);
   const [positionX, setPositionX] = useState(0);
+  console.log(track);
 
   const {
     userPlaylists,
@@ -38,24 +32,18 @@ const TempPlaylists = (track) => {
     createNewPlaylist,
     fetchingPlaylists,
     dropdownIsOpen,
-    setDropdownIsOpen,
   } = useSpotifyPlaylists();
 
-  const playlistsDropdown = useRef();
-  const playlistsDropdownButton = useRef();
+  const playlistsDropdown = useRef<Node>(null);
 
-  const handleOpenPlaylistsDropdown = (e) => {
-    console.log(e);
-
+  const handleOpenPlaylistsDropdown = () => {
     if (!dropdownIsOpen) {
-      console.log("open");
       loadUserPlaylists();
       setShowPlaylistsDropdown(!showPlaylistsDropdown);
     }
   };
 
   const handleClosePlaylistsDropdown = () => {
-    console.log("close");
     setShowPlaylistsDropdown(false);
     if (!newPlaylistName) {
       setIsCreatingPlaylist(false);
@@ -70,7 +58,9 @@ const TempPlaylists = (track) => {
       : handleOpenPlaylistsDropdown();
   };
 
-  const handleCreateNewPlaylist = async (e) => {
+  const handleCreateNewPlaylist = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
     if (newPlaylistName) {
       setSubmitButtonContent("✓");
@@ -84,16 +74,20 @@ const TempPlaylists = (track) => {
       }, 300);
     }
   };
-  const handleClickOutside = useCallback((event) => {
+  const handleClickOutside = useCallback((event: MouseEvent) => {
     if (
       playlistsDropdown?.current &&
-      !playlistsDropdown?.current?.contains(event.target)
+      !playlistsDropdown?.current?.contains(event.target as Node)
     ) {
       handleClosePlaylistsDropdown();
     }
   }, []);
 
-  const handleAddToPlaylist = (playlistId, playlistName, trackUri) => {
+  const handleAddToPlaylist = (
+    playlistId: string,
+    playlistName: string,
+    trackUri: string
+  ) => {
     try {
       addTrackToPlaylist(playlistId, trackUri);
       notifyAboutAddingToPlaylist(playlistName);
@@ -112,24 +106,30 @@ const TempPlaylists = (track) => {
     };
   }, [showPlaylistsDropdown]);
 
-  const handleDropdownPositioning = (e) => {
-    console.log(e.clientY, window.innerHeight);
+  const handleDropdownPositioning = (e: React.MouseEvent<HTMLElement>) => {
     if (window.innerWidth > 500) {
-      setPositionY(0.4 * -e.clientY);
+      setPositionY(
+        e.clientY -
+          0.5 * (window.innerHeight - (window.innerHeight - e.clientY))
+      );
       setPositionX(-250);
     } else {
-      setPositionY(140);
+      setPositionY(70);
     }
   };
+
   return (
-    <div className="playlists" ref={playlistsDropdown}>
+    <div
+      className="playlists"
+      ref={playlistsDropdown as React.RefObject<HTMLDivElement>}
+    >
       <motion.button
-        onClick={(e) => {
+        onClick={(e: React.MouseEvent<HTMLElement>) => {
           handleDropdownPositioning(e);
           handleDropdownButtonClick();
         }}
         className="playlists_open-button"
-        style={showPlaylistsDropdown && { fill: "white" }}
+        style={(showPlaylistsDropdown && { fill: "white" }) || {}}
         whileTap={{ scale: 0.96 }}
         whileHover={{ scale: 1.03 }}
       >
@@ -148,8 +148,9 @@ const TempPlaylists = (track) => {
         {showPlaylistsDropdown && (
           <motion.div
             className="playlists_container"
-            initial={{ opacity: 0, x: positionX, y: 0 }}
-            animate={{ opacity: 1, x: positionX, y: positionY }}
+            style={{ x: positionX, top: positionY, overflow: "hidden" }}
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: positionY + 100 }}
             transition={{}}
           >
@@ -186,16 +187,6 @@ const TempPlaylists = (track) => {
                 {submitButtonContent}
               </motion.button>
             </form>
-            {/* ) : (
-              <motion.button
-                onClick={() => setIsCreatingPlaylist(true)}
-                className="playlist_create-button"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-              >
-                + CREATE NEW PLAYLIST
-              </motion.button>
-            )} */}
             {fetchingPlaylists && <LoadingSpinner />}
 
             <motion.ul
@@ -228,28 +219,32 @@ const TempPlaylists = (track) => {
                     <motion.li
                       key={playlist.id}
                       // variants={itemVariants}
-                      initial={{ y: 50 }}
-                      animate={{ y: 0 }}
-                      layout
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
                       onClick={() =>
                         handleAddToPlaylist(
                           playlist.id,
                           playlist?.name,
-                          track?.track?.uri
+                          track?.uri
                         )
                       }
                     >
                       {playlist.name}
                     </motion.li>
                   ))}
-              </AnimatePresence>{" "}
+              </AnimatePresence>
               {(userPlaylists?.previous || userPlaylists?.next) && (
                 <div className="playlists_dropdown-list_buttons">
                   {userPlaylists?.previous && (
-                    <button onClick={() => fetchPrevPlaylists()}>{"<"}</button>
+                    <button onClick={() => fetchPrevPlaylists()}>
+                      <FontAwesomeIcon icon={faArrowLeft} />
+                    </button>
                   )}
                   {userPlaylists?.next && (
-                    <button onClick={() => fetchNextPlaylists()}>{">"}</button>
+                    <button onClick={() => fetchNextPlaylists()}>
+                      <FontAwesomeIcon icon={faArrowRight} />
+                    </button>
                   )}
                 </div>
               )}
@@ -261,4 +256,4 @@ const TempPlaylists = (track) => {
   );
 };
 
-export default TempPlaylists;
+export default Playlists;

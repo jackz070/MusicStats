@@ -1,9 +1,8 @@
 import React, {
+  PropsWithChildren,
   createContext,
   useState,
   useContext,
-  ReactFragment,
-  useEffect,
 } from "react";
 import { useSpotify } from "./api";
 import SpotifyApi from "spotify-api";
@@ -20,14 +19,25 @@ interface SpotifyPlaylistsContextType {
   setDropdownIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const SpotifyPlaylistsContext = createContext<SpotifyPlaylistsContextType>({});
+const initialState = {
+  userPlaylists: null,
+  loadUserPlaylists: () => Promise.resolve(),
+  fetchPrevPlaylists: () => Promise.resolve(),
+  fetchNextPlaylists: () => Promise.resolve(),
+  addTrackToPlaylist: () => Promise.resolve(),
+  createNewPlaylist: () => Promise.resolve(),
+  fetchingPlaylists: true,
+  dropdownIsOpen: false,
+  setDropdownIsOpen: () => {},
+};
+
+const SpotifyPlaylistsContext =
+  createContext<SpotifyPlaylistsContextType>(initialState);
 SpotifyPlaylistsContext.displayName = "spotifyPlaylistsContext";
 
 export const SpotifyPlaylistsContextProvider = ({
   children,
-}: {
-  children: ReactFragment;
-}) => {
+}: PropsWithChildren) => {
   const spotifyPlaylists = useProvideSpotifyPlaylists();
 
   return (
@@ -69,7 +79,6 @@ const useProvideSpotifyPlaylists = () => {
 
       setUserPlaylists(playlists);
       setFetchingPlaylists(false);
-      console.log(userPlaylists);
     } catch (err) {
       console.error(err);
     }
@@ -84,7 +93,9 @@ const useProvideSpotifyPlaylists = () => {
       const playlists = await fetchUserPlaylists(userPlaylists.next);
 
       setUserPlaylists(playlists);
-      setFetchingPlaylists(false);
+      setTimeout(() => {
+        setFetchingPlaylists(false);
+      }, 300);
     } catch (err) {
       console.error(err);
     }
@@ -99,7 +110,9 @@ const useProvideSpotifyPlaylists = () => {
       const playlists = await fetchUserPlaylists(userPlaylists.previous);
 
       setUserPlaylists(playlists);
-      setFetchingPlaylists(false);
+      setTimeout(() => {
+        setFetchingPlaylists(false);
+      }, 300);
     } catch (err) {
       console.error(err);
     }

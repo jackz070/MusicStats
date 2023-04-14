@@ -1,20 +1,23 @@
 import React from "react";
 import SingleTrack from "./SingleTrack";
 import { TrackObjectFull } from "spotify-api";
+import SpotifyApi from "spotify-api";
+import { TrackObjectFullExtendedWithSaved } from "musicstats/src/api/api";
 
 interface TrackDataWithItems {
-  items: TrackObjectFull[];
+  items: TrackObjectFullExtendedWithSaved[];
   tracks?: never;
   next?: string | null;
   previous?: string | null;
 }
 interface TrackDataWithTracks {
   items?: never;
-  tracks: TrackObjectFull[];
+  tracks: TrackObjectFullExtendedWithSaved[];
   next?: string | null;
   previous?: string | null;
 }
 type TrackData = TrackDataWithItems | TrackDataWithTracks;
+
 interface TrackListProps {
   trackData: TrackData;
   tracksAreFetchable: boolean;
@@ -31,6 +34,7 @@ const TrackList = ({
   widthSmall = false,
 }: TrackListProps) => {
   if (trackData?.tracks) {
+    //@ts-ignore
     trackData.items = trackData.tracks;
   }
 

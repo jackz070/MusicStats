@@ -44,13 +44,13 @@ const LikeButton = ({ itemId, saved }: { itemId: string; saved: boolean }) => {
               height="30"
               viewBox="0 0 150 150"
               className="saved_icon"
-              animate={{ scale: [1, 1.3, 1] }}
+              animate={{ scale: [1, 1.2, 1] }}
             >
               <path d="M 125.784 35.0369 C 113.039 22.2916 92.9859 21.3682 79.1227 32.8994 C 79.1062 32.9135 77.318 34.3807 75 34.3807 C 72.6234 34.3807 70.9266 32.9416 70.8609 32.8853 C 57.0141 21.3682 36.9609 22.2916 24.2156 35.0369 C 17.6695 41.583 14.0625 50.2877 14.0625 59.5478 C 14.0625 68.808 17.6695 77.5127 24.0914 83.9228 L 64.3078 131.006 C 66.9844 134.14 70.882 135.938 75 135.938 C 79.1203 135.938 83.0156 134.14 85.6922 131.009 L 125.782 84.0611 C 139.301 70.5447 139.301 48.5533 125.784 35.0369 Z" />
             </motion.svg>
           ) : (
             <motion.svg
-              animate={{ scale: [1, 0.7, 1] }}
+              animate={{ scale: [1, 0.8, 1] }}
               xmlns="http://www.w3.org/2000/svg"
               width="30"
               height="30"
@@ -66,12 +66,7 @@ const LikeButton = ({ itemId, saved }: { itemId: string; saved: boolean }) => {
               LIKED
             </motion.div>
           ) : (
-            <motion.div
-              initial={{ y: 5, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-            >
-              LIKE
-            </motion.div>
+            <motion.div animate={{ y: 0, opacity: 1 }}>LIKE</motion.div>
           )}
         </motion.div>
       </AnimatePresence>

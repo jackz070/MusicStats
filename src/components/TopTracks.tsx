@@ -16,11 +16,12 @@ const TopTracks = () => {
     <section id="top_tracks">
       <div className="top-tracks_header">
         <h2>Top Tracks</h2>
-        <TrackRecommendations seed={topTracks} type="tracks" />
+        {topTracks && <TrackRecommendations seed={topTracks} type="tracks" />}
       </div>
       {isLoading && <div>Loading...</div>}
       {topTracks && (
         <TrackList
+          //@ts-ignore
           trackData={topTracks}
           tracksAreFetchable={true}
           next={fetchNextTracks}

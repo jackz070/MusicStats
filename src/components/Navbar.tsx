@@ -18,12 +18,12 @@ export const Navbar = () => {
   const { user, logout } = useSpotify();
   return (
     <nav className={`navbar ${user && "navbar-background"}`}>
-      <div className="navbar_logo">
+      <a className="navbar_logo" href="#">
         <h1>MusicStats</h1>
         <div className="navbar_logo-bottom">
           <span>for</span> <img src={SpotifyLogo} />
         </div>
-      </div>
+      </a>
 
       {user && (
         <motion.div
@@ -57,17 +57,17 @@ export const Navbar = () => {
             className="user-info_menu"
             variants={{
               open: {
-                clipPath: "inset(0% 0% 0% 0% round 10px)",
+                clipPath: "inset(0% 0% 0% 0% )",
                 transition: {
                   type: "spring",
                   bounce: 0,
-                  duration: 0.7,
-                  delayChildren: 0.3,
+                  duration: 0.4,
+                  delayChildren: 0.2,
                   staggerChildren: 0.05,
                 },
               },
               closed: {
-                clipPath: "inset(10% 50% 90% 50% round 10px)",
+                clipPath: "inset(10% 50% 90% 50% )",
                 transition: {
                   type: "spring",
                   bounce: 0,
@@ -87,7 +87,7 @@ export const Navbar = () => {
               <a href="#top_genres">Top Genres</a>
             </motion.li>
             <motion.li variants={itemVariants} className="user-info_menu-item">
-              <a href="#   recently_played">Recently Played</a>
+              <a href="#recently_played">Recently Played</a>
             </motion.li>
             <motion.li variants={itemVariants}>
               <a

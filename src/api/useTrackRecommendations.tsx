@@ -1,4 +1,5 @@
 import React, {
+  PropsWithChildren,
   createContext,
   useState,
   useContext,
@@ -7,26 +8,31 @@ import React, {
 import { useSpotify } from "./api";
 import SpotifyApi from "spotify-api";
 
+const initialState = {
+  recommendations: null,
+  fetchingRecommendations: true,
+  setRecommendations: () => {},
+  fetchTrackRecommendations: () => Promise.resolve(),
+};
+
 interface SpotifyTrackRecommendationsContextType {
   recommendations: SpotifyApi.RecommendationTrackObject | null;
   fetchingRecommendations: boolean;
   setRecommendations: React.Dispatch<React.SetStateAction<null>>;
   fetchTrackRecommendations: (
-    seedValue: string[],
+    seedValue: string | string[],
     seedType: string
   ) => Promise<void>;
 }
 
 const SpotifyTrackRecommendationsContext =
-  createContext<SpotifyTrackRecommendationsContextType>({});
+  createContext<SpotifyTrackRecommendationsContextType>(initialState);
 SpotifyTrackRecommendationsContext.displayName =
   "spotifyTrackRecommendationsContext";
 
 export const SpotifyTrackRecommendationsContextProvider = ({
   children,
-}: {
-  children: ReactFragment;
-}) => {
+}: PropsWithChildren) => {
   const spotifyTrackRecommendations = useProvideTrackRecommendations();
 
   return (
@@ -49,7 +55,7 @@ const useProvideTrackRecommendations = () => {
   const { callApiEndpoint, token, appendSavedStatusToTracks } = useSpotify();
 
   const fetchTrackRecommendations = async (
-    seedValue: string,
+    seedValue: string | string[],
     seedType: string
   ) => {
     try {

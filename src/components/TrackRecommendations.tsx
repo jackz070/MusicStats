@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, RefObject } from "react";
 import { useSpotify } from "../api/api";
 import TrackList from "./DisplayTracks/TrackList";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,7 +17,7 @@ const TrackRecommendations = ({
   seed,
   type,
 }: {
-  seed: SpotifyApi.UsersTopTracksResponse;
+  seed: SpotifyApi.UsersTopTracksResponse | SpotifyApi.UsersTopArtistsResponse;
   type: string;
 }) => {
   const [showRecommendationsModal, setShowRecommendationsModal] =
@@ -30,7 +30,7 @@ const TrackRecommendations = ({
     setRecommendations,
   } = useSpotifyTrackRecommendations();
 
-  const modal = useRef<Element | HTMLElement>(null);
+  const modal = useRef<HTMLDivElement>(null);
 
   const handleRecommendationsModalOpen = async () => {
     setShowRecommendationsModal(!showRecommendationsModal);
@@ -53,18 +53,18 @@ const TrackRecommendations = ({
     }
   }, [seedValue]);
 
-  const handleClickOutside = (event) => {
-    if (modal.current && !modal.current.contains(event.target)) {
+  const handleClickOutside = (event: React.MouseEvent) => {
+    if (modal.current && !modal.current.contains(event.target as HTMLElement)) {
       setShowRecommendationsModal(false);
     }
   };
 
   const onModalOpen = () => {
-    disableBodyScroll(modal);
+    disableBodyScroll(modal as unknown as Element | HTMLElement);
   };
 
   const onModalClose = () => {
-    enableBodyScroll(modal);
+    enableBodyScroll(modal as unknown as Element | HTMLElement);
     setRecommendations(null);
   };
 
@@ -105,6 +105,7 @@ const TrackRecommendations = ({
               {recommendations && (
                 <div className="recommendations_modal-tracks">
                   <TrackList
+                    //@ts-ignore
                     trackData={recommendations}
                     tracksAreFetchable={false}
                     widthSmall={true}

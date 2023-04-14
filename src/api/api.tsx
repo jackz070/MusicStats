@@ -1,4 +1,5 @@
 import {
+  PropsWithChildren,
   ReactFragment,
   createContext,
   useContext,
@@ -18,6 +19,32 @@ const SPOTIFY = {
   ACCESS_TOKEN: "SPOTIFY_ACCESS_TOKEN",
   EXP_TIMESTAMP: "SPOTIFY_TOKEN_EXPIRE_TIMESTAMP",
   TOKEN_TYPE: "SPOTIFY_TOKEN_TYPE",
+};
+
+const initialState = {
+  callApiEndpoint: () => Promise.resolve(),
+  user: null,
+  token: null,
+  login: () => {},
+  logout: () => {},
+  isLoading: true,
+  hasLoggedIn: false,
+  storeTokenAtRedirect: () => {},
+  fetchUserInfo: () => {},
+  topArtists: undefined,
+  currentlyPlaying: null,
+  changeTimeRange: () => {},
+  fetchNextArtists: () => {},
+  fetchPrevArtists: () => {},
+  timeRange: "",
+  isFetching: true,
+  genreData: null,
+  recentlyPlayed: null,
+  checkIfSaved: () => Promise.resolve(),
+  changeSaved: () => Promise.resolve(),
+  appendSavedStatusToTracks: () => Promise.resolve(),
+  callApiEndpointWithBody: () => Promise.resolve(),
+  topArtistsIsFetching: true,
 };
 
 export const generateState = (length: number) => {
@@ -78,15 +105,20 @@ export interface SpotifyContextType {
     path: string;
     method?: string | undefined;
     token: string | null | undefined;
-    body?: string | null;
+    body?: string | undefined;
   }) => Promise<any>;
+  topArtistsIsFetching: boolean;
 }
-// TODO: build initial state
-const spotifyContext = createContext<SpotifyContextType>({});
+
+const spotifyContext = createContext<SpotifyContextType>(initialState);
 spotifyContext.displayName = "SpotifyContext";
 
-export const SpotifyProvider = ({ children }: { children: ReactFragment }) => {
+export const SpotifyProvider = ({ children }: PropsWithChildren) => {
   const spotify = useProvideSpotify();
+
+  if (!spotify) {
+    throw new Error("");
+  }
 
   return (
     <spotifyContext.Provider value={spotify}>
@@ -108,7 +140,7 @@ const useProvideSpotify = () => {
   const [topArtists, setTopArtists] = useState<
     SpotifyApi.UsersTopArtistsResponse | undefined
   >(undefined);
-
+  const [topArtistsIsFetching, setTopArtistsIsFetching] = useState(false);
   const [timeRange, setTimeRange] = useState("medium_term");
   const [isFetching, setIsFetching] = useState(false);
   const [currentlyPlaying, setCurrentlyPlaying] =
@@ -294,13 +326,14 @@ const useProvideSpotify = () => {
   const appendSavedStatusToTracks = async (tracksData: {
     items: SpotifyApi.TrackObjectFull[];
   }) => {
-    console.log(tracksData);
-
     const trackIds: string[] = [];
     tracksData.items.forEach((track) => trackIds.push(track.id));
     const savedData = await checkIfSaved(trackIds);
 
-    tracksData.items.forEach((item, index) => (item.saved = savedData[index]));
+    tracksData.items.forEach(
+      //@ts-ignore
+      (item, index) => (item.saved = savedData[index])
+    );
   };
 
   const loadRecentlyPlayed = async () => {
@@ -341,6 +374,17 @@ const useProvideSpotify = () => {
       path: `${callPath}&time_range=${timeRange}`,
       token,
     });
+  };
+
+  const loadTopArtists = async () => {
+    setTopArtistsIsFetching(true);
+    try {
+      const artistsData = await fetchTopArtists();
+      setTopArtists(artistsData);
+      setTopArtistsIsFetching(false);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const loadAllData = async () => {
@@ -412,7 +456,7 @@ const useProvideSpotify = () => {
     tallyGenres();
   };
 
-  const checkIfSaved = async (id) => {
+  const checkIfSaved = async (id: string | string[]) => {
     try {
       const callPath = `/me/tracks/contains?ids=${id}`;
       return await callApiEndpoint({
@@ -426,12 +470,13 @@ const useProvideSpotify = () => {
 
   const changeSaved = async (id: string, method: string) => {
     try {
-      // if response status is 200 confirm success
       const callPath = `/me/tracks?ids=${id}`;
-      return await callApiEndpoint({
-        path: `${callPath}`,
+      // skipping callApiEndpoint method because this one api call returns no data when it's ok which gives an error as the method includes .json(). It's easier to use fetch directly here than check response for content-length for this one case.
+      return await fetch(`${baseURL}${callPath}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         method,
-        token,
       });
     } catch (err) {
       console.error(err);
@@ -464,15 +509,17 @@ const useProvideSpotify = () => {
       if (!user) {
         loadCurrentUser();
       } else {
-        setIsLoading(false);
         loadAllData();
+        setIsLoading(false);
       }
     }
   }, [token, tokenExpiry, user]);
 
+  // Load data on timeRange change (only for data that changes in relevant manner)
   useEffect(() => {
     if (token && tokenExpiry && user) {
-      loadAllData();
+      getGenreData();
+      loadTopArtists();
     }
   }, [timeRange]);
 
@@ -501,5 +548,6 @@ const useProvideSpotify = () => {
     checkIfSaved,
     changeSaved,
     callApiEndpointWithBody,
+    topArtistsIsFetching,
   };
 };

@@ -14,14 +14,7 @@ import { Navbar } from "./components/Navbar";
 import { ErrorBoundary } from "react-error-boundary";
 
 function App() {
-  const {
-    hasLoggedIn,
-    hasRedirectedFromValidPopup,
-    isLoading,
-    login,
-    logout,
-    user,
-  } = useSpotify();
+  const { hasLoggedIn, isLoading } = useSpotify();
 
   const router = createBrowserRouter(
     createRoutesFromElements([
@@ -33,7 +26,7 @@ function App() {
     ])
   );
 
-  const Fallback = ({ error, resetErrorBoundary }) => {
+  const Fallback = ({ error }: { error: Error }) => {
     return (
       <div role="alert">
         <p>Something went wrong:</p>
