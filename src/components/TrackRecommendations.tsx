@@ -88,7 +88,7 @@ const TrackRecommendations = ({
             onClick={(event) => handleClickOutside(event)}
           >
             <motion.div
-              initial={{ opacity: 0, y: -300 }}
+              initial={{ opacity: 0, y: 300 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 300 }}
               ref={modal}

@@ -1,7 +1,6 @@
 .floating-bar-time_range-buttons {
   position: fixed;
   width: 16rem;
-
   bottom: 0.5rem;
   left: 2%;
   background-color: #006b67;
@@ -19,6 +18,10 @@
     left: calc(50% - 10rem);
   }
 
+  @media screen and (max-width: 500px) {
+    padding: 0.25rem 2rem;
+  }
+
   .floating-bar-time_range-button {
     font-size: 1.2rem;
     color: white;
@@ -27,6 +30,10 @@
     cursor: pointer;
     transition: all 0.8s;
     margin: 0.1rem 0.5rem;
+
+    @media screen and (max-width: 500px) {
+      font-size: 1rem;
+    }
 
     &:hover:not(.active) {
       background-color: #636489;
