@@ -91,6 +91,10 @@
   }
   .top-tracks_table-name_small {
     max-width: 280px;
+
+    @media screen and (max-width: 500px) {
+      max-width: 150px;
+    }
   }
 
   .top-tracks_table-artist {
